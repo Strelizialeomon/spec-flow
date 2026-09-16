@@ -71,7 +71,26 @@ description: 复杂活的六步流程：描述需求 → 确认需求 → 出 sp
 - **撞锁 = 停**：`fatal: a branch named 'issue-<N>' already exists` = 有人领过。`git worktree list` 找到对方工作区路径：目录还在 → 人在做，去读该 issue 的评论定等 / 让；目录没了 → 对方已不在，`git worktree prune` 清掉残留登记后接手：`git worktree add <wt根>/issue-<N> issue-<N>`（不带 -b 复用旧分支 = 接着对方的提交干；想推倒重来就先 `git branch -D issue-<N>` 再带 -b 新建）。
 - **放锁**：PR 合并后 `git worktree remove <wt根>/issue-<N>` + `git branch -d issue-<N>`（`-d` 认的是 fetch 后的 origin/main，先 `git fetch origin`；远端 squash 合并时 `-d` 照样以 not fully merged 拒删——换 `-D`，2026-09-16 实测）。不放 = issue 重开时永远撞锁。
 - **进 worktree 第一件事重新取基准**（`pwd`）：编辑工具用的绝对路径不跟 cwd 走，照会话前半段记下的主仓路径写，改的是主仓、还没报错。快信号：新写的测试报 `no tests to run`、新符号 grep 不到、worktree 里 `git status` 是空的。
-- **边界**：锁只挡同号认领——不同 issue 改同一堆文件拦不住（那是拆 spec 时「独占文件」规矩管的，见 `references/split-large-spec.md`）；跨机 / 跨 clone 不共享 `.git`，无锁；`git worktree add --force` 能强拆——本机制只防守规矩的人犯错，不防故意绕过。没有 issue 号的活无锁可领，命名随意（惯例 `<type>/<slug>`）。
+- **边界**：锁只挡同号认领——不同 issue 改同一堆文件拦不住（那是拆 spec 时「独占文件」规矩管的，见 `references/split-large-spec.md`）；跨机 / 跨 clone 不共享 `.git`，无锁；`git worktree add --force` 能强拆——本机制只防守规矩的人犯错，不防故意绕过。没有 issue 号的活：wt 照开（见下面「工作区规矩」）但无锁可领，命名随意（惯例 `<type>/<slug>`）。
+
+## 工作区规矩：凡文件变更，先开 worktree
+
+**默认**：凡涉及文件变更——spec、代码、文档都一样——从 main / master 开 worktree 再动手，别在主仓改。主仓的工作区、暂存区、HEAD 是全仓共享的，多 agent 并行时互踩没有兜底。
+
+**豁免（只由用户发起，agent 不自己判、不主动建议——宁可啰嗦，不可漏锁）：**
+
+- **当场豁免**：用户说「直接改 / 不开 wt」→ 本次在主仓改。
+- **常设豁免**：用户说「X 仓以后免 wt」→ 记进下面名单，一仓一行，长期有效；要取消也说一声，划掉那行。
+
+| 仓 | 豁免范围 | 宣告日期 |
+|---|---|---|
+| py-script | 全部变更免 wt | 2026-09-16 |
+| llm_auto_report | 全部变更免 wt | 2026-09-16 |
+
+**两条边界：**
+
+- **真并行多 agent 的仓（CLAUDE.md 声明了的），豁免不免锁**：issue 认领一律走第 6 步「认领与防撞车」——锁就是 wt 本身，免 wt = 拆锁。
+- **豁免只免「开 wt」一个动作**，不免六步流程的其他环节（该出 spec 照出；「直接干」免流程是下面「例外」节的另一条例，不混）。
 
 ## 分工边界
 
@@ -86,4 +105,4 @@ spec 一份装不下、要拆成几份子 spec 时，以前的做法记在 `refe
 
 ## 例外
 
-改一行、纯查一个事实、或用户明确说「直接干 / 别走流程」时，不套这六步。
+改一行、纯查一个事实、或用户明确说「直接干 / 别走流程」时，不套这六步。这条免的是**流程**；「不开 wt」的**工作区**豁免见上面「工作区规矩」——两条例外各管各的，不混。
