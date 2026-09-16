@@ -29,6 +29,7 @@ spec-flow 以前**活在 git 之外**：三处副本、零历史。2026-09-16 �
 ```
 SKILL.md                     流程正文
 references/split-large-spec.md   拆大 spec 的备忘录（非流程）
+references/adoption-model.md     采纳模型（三层）的备忘录（非流程）
 ```
 
 ## 历史说明
