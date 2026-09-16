@@ -58,11 +58,20 @@ description: 复杂活的六步流程：描述需求 → 确认需求 → 出 sp
 - ⚠️ 代码 PR 不在此授权内，仍按「Git: 危险操作」的规矩走
 
 **第 6 步（issue）：**
-- ⏰ **时机：spec PR 合并之后、代码实施之前**（owner 2026-09-01 钦定；全局 CLAUDE.md、xhs-analysis、taoxi_system 三处同序：spec →（审核）→ PR 合并 → issue）。理由是 issue 锚的是 main 上 spec 的**永久链接**，必须等 spec 定稿合并；反过来先开 issue 后合并 PR，issue 引用的 spec 还在被审核修订，两边互相引着改，麻烦。代码实施是 issue 开出来后认领（worktree 名字就用 issue 号）
+- ⏰ **时机：spec PR 合并之后、代码实施之前**（owner 2026-09-01 钦定；全局 CLAUDE.md、xhs-analysis、taoxi_system 三处同序：spec →（审核）→ PR 合并 → issue）。理由是 issue 锚的是 main 上 spec 的**永久链接**，必须等 spec 定稿合并；反过来先开 issue 后合并 PR，issue 引用的 spec 还在被审核修订，两边互相引着改，麻烦。代码实施是 issue 开出来后认领——认领动作与防撞锁见下面「认领与防撞车」
 - 正文**只放 spec 链接 + 改动面 + 验收要点（checkbox 先不勾），不贴 spec 全文**
 - spec 链接用合并后 main 上的永久链接
 - spec 头部的 `Issue:` 字段回填 issue 号（此时已知号，一并提交或小 PR 补上）
-- 实施 PR 合并后，回头把 issue 里已满足的验收项勾掉 + 评论一句「代码已合」
+- 实施 PR 合并后，回头把 issue 里已满足的验收项勾掉 + 评论一句「代码已合」，并删 worktree 放锁（见下）
+
+**认领与防撞车（锁由 git 保管，不靠登记、不靠吱声）：**
+
+- **命名 = 锁**：分支和 worktree 目录同名 `issue-<N>`，纯号、无 slug、无前缀。同一 `.git` 里分支名唯一、已被检出的分支不许再检出——git 强制（2026-09-16 实测：5 进程并发抢同号，恰好 1 个开成，其余全被 fatal 拒）。**认领就是开 worktree**：开得成 = 没人做；被拒 = 有人在做。
+- **认领**：`git fetch origin --prune` 后 `git worktree add <wt根>/issue-<N> -b issue-<N> origin/main`（wt 根项目自定，如 `.claude/worktrees/`；从 origin/main 建，本地 main 可能落后）。想早知道可先 `git worktree list | grep issue-<N>`——可选，锁不靠它。⚠️ 别拿 issue `open` 当「没人认领」：open 同时表示待做和在做（xhs-analysis #12 实测：两个 agent 都据此判断「没人做」，双双做完浪费一份）——只信锁。
+- **撞锁 = 停**：`fatal: a branch named 'issue-<N>' already exists` = 有人领过。`git worktree list` 找到对方工作区路径：目录还在 → 人在做，去读该 issue 的评论定等 / 让；目录没了 → 对方已不在，`git worktree prune` 清掉残留登记后接手：`git worktree add <wt根>/issue-<N> issue-<N>`（不带 -b 复用旧分支 = 接着对方的提交干；想推倒重来就先 `git branch -D issue-<N>` 再带 -b 新建）。
+- **放锁**：PR 合并后 `git worktree remove <wt根>/issue-<N>` + `git branch -d issue-<N>`（`-d` 认的是 fetch 后的 origin/main，先 `git fetch origin`；远端 squash 合并时 `-d` 照样以 not fully merged 拒删——换 `-D`，2026-09-16 实测）。不放 = issue 重开时永远撞锁。
+- **进 worktree 第一件事重新取基准**（`pwd`）：编辑工具用的绝对路径不跟 cwd 走，照会话前半段记下的主仓路径写，改的是主仓、还没报错。快信号：新写的测试报 `no tests to run`、新符号 grep 不到、worktree 里 `git status` 是空的。
+- **边界**：锁只挡同号认领——不同 issue 改同一堆文件拦不住（那是拆 spec 时「独占文件」规矩管的，见 `references/split-large-spec.md`）；跨机 / 跨 clone 不共享 `.git`，无锁；`git worktree add --force` 能强拆——本机制只防守规矩的人犯错，不防故意绕过。没有 issue 号的活无锁可领，命名随意（惯例 `<type>/<slug>`）。
 
 ## 分工边界
 
