@@ -150,12 +150,12 @@ description: 复杂活的两段流程：方案期六步（描述需求 → 确�
 
 **两条边界：**
 
-- **真并行多 agent 的仓（CLAUDE.md 声明了的），豁免不免锁**：issue 认领一律走第 7 步「认领与防撞车」——锁就是 wt 本身，免 wt = 拆锁。
+- **真并行多 agent 的仓（指令文件 `AGENTS.md` / `CLAUDE.md` 声明了的），豁免不免锁**：issue 认领一律走第 7 步「认领与防撞车」——锁就是 wt 本身，免 wt = 拆锁。
 - **豁免只免「开 wt」一个动作**，不免两段流程的其他环节（该出 spec 照出；「直接干」免的是**方案期那一段**，见下面「例外」节——那是另一条例，不混）。
 
 ## 分工边界
 
-本 skill 只管流程骨架。**项目专属的体例**（spec 放哪个目录、issue 标题格式、用哪些标签、正文节序）由该项目的 `CLAUDE.md` 或项目记忆承载——先查项目记忆里有没有 house style（如 xhs-analysis 的 `issue-and-spec-house-style`），有就照它写。
+本 skill 只管流程骨架。**项目专属的体例**（spec 放哪个目录、issue 标题格式、用哪些标签、正文节序）由该项目的指令文件（`AGENTS.md` / `CLAUDE.md`）或 agent 记忆承载——先查这两处有没有 house style（如 xhs-analysis 的 `issue-and-spec-house-style` 记忆条目），有就照它写。
 
 ⚠️ **本 skill 里出现的具体仓名，只准是「某条规矩的一次性证据」，不准攒成可追加的登记表**——仓自己改了规矩，没人会回来改这里，登记表只会越挂越旧。2026-09-16 那张逐仓豁免名单就是因此整张删掉的（来龙去脉见 `references/adoption-model.md`）。
 
