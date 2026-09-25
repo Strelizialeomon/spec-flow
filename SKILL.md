@@ -207,7 +207,7 @@ ADR（跨任务长期决策记录）的可选做法记在 `references/adr-decisi
 
 「spec-flow 怎么被一个项目采用」（**只指向式** / 同步 + 指向 / 不引用 / 当场引用）的设计与历次演进记在 `references/adoption-model.md`——同样是备忘录，不是流程；采纳动作发生在项目侧，不发生在这份文件里。**新仓默认走只指向式**，由上面〈应用到项目〉产出。
 
-文档、spec、ADR、issue / PR 的分工与 spec 基线后的变更分流，记在 `references/documentation-lifecycle.md`。**这是可选备忘录，默认不启用**；仅用户明确要求，或项目规则已声明采用时，才读取并执行。项目只留指针和本地 owner 映射，不复制本备忘录正文。
+文档、spec、ADR、issue / PR 的分工、spec 基线后的变更分流，以及让现状文档少而新的几条约束，记在 `references/documentation-lifecycle.md`。**这是可选备忘录，默认不启用**；仅用户明确要求，或项目规则已声明采用时，才读取并执行。项目只留指针和本地 owner 映射，不复制本备忘录正文。
 
 ## 例外
 
