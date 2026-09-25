@@ -33,6 +33,7 @@ SKILL.md                     流程正文
 references/split-large-spec.md   拆大 spec 的备忘录（非流程）
 references/adr-decision-records.md  ADR 可选采用的备忘录（非流程，默认不启用）
 references/adoption-model.md     采纳模型（三层）的备忘录（非流程）
+references/documentation-lifecycle.md  文档生命周期的可选备忘录（非流程）
 references/apply-to-project.md   应用到项目的模板与细则（用户触发，非流程）
 ```
 
