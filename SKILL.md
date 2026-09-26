@@ -24,6 +24,8 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 8. **实施** —— 在 worktree 里干活（规矩见「工作区规矩」节）
 9. **过闸 → 合并 → 回填** —— 实施 PR 合并前过闸（见闸节）；合并后回填 issue、关单、放锁
 
+**闸**独立一节、两段共用——档位怎么摆、审什么、什么免过，两段同一套。
+
 ## 例外
 
 改一行、纯查一个事实、或用户明确说「直接干 / 别走流程」时，只免方案期那一段（不出 spec、不开 issue）——**不免闸：交付物照样过闸**（见闸节），别拿「我这是改一行」当跳过摆卡的理由。
@@ -47,9 +49,10 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
   | 重审 + 变异 | 2 个 agent，外加 agent 自己跑一次变异 | 约 10 分钟 + 18 秒 |
 
   - 清单完整性 / 范围外对账两项**不新增派发**——轻审由那 1 个 agent 一并做；重审并进「规格符合性」那一路，不新增第三路。
-  - ⚠️ **档位是「每一份」的强度，多份按份数叠加**（一份 spec 一个 agent、多份并行派）。摆卡时必须把账算给用户看：「本次 N 份 × 该档 = 约 X 个 agent / Y 分钟」——不是只报单份的数（5 份子 spec 点轻审 = 5 个 agent，不是 1 个）。这是代价不对称：按总数算会让每份被静默审浅（用户以为审过了），按每份算最多是贵，而且当场看得见。
+  - ⚠️ **档位是「每一份」的强度，多份按份数叠加**（一份 spec 一个 agent、多份并行派）。
+  - 摆卡时**必须把账算给用户看**：「本次 N 份 × 该档 = 约 X 个 agent / Y 分钟」——不是只报单份的数（5 份子 spec 点轻审 = 5 个 agent，不是 1 个）。这是代价不对称：按总数算会让每份被静默审浅（用户以为审过了），按每份算最多是贵，而且当场看得见。
   - 轻审只有 1 个 agent，**定位按阶段劈**：spec 期审的是文档，严重发现压倒性是事实/符合类；实施期审的是代码，压倒性是对抗类（依据：rationale R3）。重审两路俱全不用劈；摆卡时按当前阶段直接写对应定位。实施期那侧扩了一项（定位以上表为准）。
-  - 「变异」**不是 subagent**：把判据换成错的写法、跑一遍全量测试看红不红（全绿 = 这条判据没有护栏）。它只跟「重审」捆绑出售——卡上摆出来就是「重审 + 变异」这一整档，没有独立开关。
+  - **「变异」不是 subagent**：把判据换成错的写法、跑一遍全量测试看红不红（全绿 = 这条判据没有护栏）。它只跟「重审」捆绑出售——卡上摆出来就是「重审 + 变异」这一整档，没有独立开关。
 - 项目规矩明令禁止某一档时，**那一档不摆**——以项目为准，别拿本流程去压它。派审核的 prompt 里也不许要求 agent 去跑它。哪个仓禁了哪一档，问那个仓自己的指令——本 skill 不登记、不攒名单，也不去猜。
 - 用户点了哪档就按哪档做；**没点 / 点了别的 → 按「不审」走**，直接往合并走：不阻塞、不追问、不换个说法再问。
 - **交付物口径**：spec、实施成果（代码或交付型文档）必过闸；回填 issue 号 / 状态行 / 索引等无新内容的机械文档变更免过闸（依据是本条列举式豁免本身）。
@@ -133,7 +136,7 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 - **命名 = 锁**：分支和 worktree 目录同名 `issue-<N>`，纯号、无 slug、无前缀。同一 `.git` 里分支名唯一、已被检出的分支不许再检出——git 强制（依据：rationale R6）。认领就是开 worktree：开得成 = 没人做；被拒 = 有人在做。
 - **认领**：`git fetch origin --prune` 后 `git worktree add <wt根>/issue-<N> -b issue-<N> origin/main`（wt 根项目自定，如 `.claude/worktrees/`；从 origin/main 建，本地 main 可能落后）。想早知道可先 `git worktree list | grep issue-<N>`——可选，锁不靠它。⚠️ 别拿 issue `open` 当「没人认领」：open 同时表示待做和在做（依据：rationale R7）——只信锁。
 - **撞锁 = 停**：`fatal: a branch named 'issue-<N>' already exists` = 有人领过。`git worktree list` 找到对方工作区路径：目录还在 → 人在做，去读该 issue 的评论定等 / 让；目录没了 → 对方已不在，`git worktree prune` 清掉残留登记后接手：`git worktree add <wt根>/issue-<N> issue-<N>`（不带 -b 复用旧分支 = 接着对方的提交干；想推倒重来就先 `git branch -D issue-<N>` 再带 -b 新建）。
-- **放锁**：PR 合并后 `git worktree remove <wt根>/issue-<N>` + `git branch -d issue-<N>`（`-d` 认的是 fetch 后的 origin/main，先 `git fetch origin`；远端 squash 合并时 `-d` 照样以 not fully merged 拒删——换 `-D`；依据：rationale R8）。不放 = issue 重开时永远撞锁。
+- **放锁**：PR 合并后 `git worktree remove <wt根>/issue-<N>` + `git branch -d issue-<N>`（`-d` 认的是 fetch 后的 origin/main，先 `git fetch origin`；远端 squash 合并时 `-d` 照样以 not fully merged 拒删——换 `-D`）（依据：rationale R8）。不放 = issue 重开时永远撞锁。
 - **进 worktree 第一件事重新取基准**（`pwd`）：编辑工具用的绝对路径不跟 cwd 走，照会话前半段记下的主仓路径写，改的是主仓、还没报错。快信号：新写的测试报 `no tests to run`、新符号 grep 不到、worktree 里 `git status` 是空的。
 - **边界**：锁只挡同号认领——不同 issue 改同一堆文件拦不住（那是拆 spec 时「独占文件」规矩管的，见 `references/split-large-spec.md`）；跨机 / 跨 clone 不共享 `.git`，无锁；`git worktree add --force` 能强拆——本机制只防守规矩的人犯错，不防故意绕过。没有 issue 号的活：wt 照开（见「工作区规矩」节）但无锁可领，命名随意（惯例 `<type>/<slug>`）。
 
@@ -153,7 +156,7 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 
 ## 应用到项目
 
-**触发**：用户说「把 spec-flow 应用到（本）项目」（可带附加描述，如「同时启用 ADR」）或显式 `/skill:spec-flow 应用到项目 …` 时，把目标项目切成就地指向 spec-flow 的采纳形态：只放指针、不放流程副本。这是用户可触发功能，不是两段流程的一步——没被要求别自作主张。
+**触发**：用户说「把 spec-flow 应用到（本）项目」（可带附加描述，如「同时启用 ADR」）或显式 `/skill:spec-flow 应用到项目 …` 时，一句话把目标项目切成就地指向 spec-flow 的采纳形态：只放指针、不放流程副本。这是用户可触发功能，不是两段流程的一步——没被要求就别自作主张应用到当前仓。
 
 执行五步：检测现状 → 判目标文件 → 写指针块 → 解析附加描述 → 报告结果。判定树、模板、幂等规则全在 `references/apply-to-project.md`，照它取，别现编。
 
@@ -168,7 +171,7 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 | 备忘录 | 何时读 / 约束 |
 |---|---|
 | `references/split-large-spec.md` | spec 要拆成几份子 spec 时；两段流程不因它变形，要不要拆、怎么拆以当时说定的为准，没读照走 |
-| `references/adr-decision-records.md` | ADR（跨任务长期决策记录）：默认不启用，不因项目复杂自行引入、不主动追问；仅用户明确要求启用、明确要求本次写 ADR，或项目规则已声明采用时读取执行；项目级采用把持久入口落在项目自己的指令与文档，本 skill 不维护采用名单 |
+| `references/adr-decision-records.md` | ADR（跨任务长期决策记录）：默认不启用，不因项目复杂自行引入、不主动追问；仅用户明确要求启用 / 接入、明确要求本次写 ADR，或项目规则已声明采用时读取执行；项目级采用必须把持久入口落在项目自己的指令与文档，本 skill 不维护采用名单 |
 | `references/documentation-lifecycle.md` | 文档 / spec / ADR / issue 分工与变更分流：默认不启用，仅用户明确要求或项目规则已声明采用时读取执行（采纳见 `references/apply-to-project.md` §八）；项目采用只留指针、一行默认读序和本地 owner 映射，不复制正文 |
 | `references/adoption-model.md` | 采纳模型的设计与演进，采纳动作在项目侧；新仓默认走只指向式，由〈应用到项目〉产出 |
 | `references/apply-to-project.md` | 〈应用到项目〉的模板全文 |
