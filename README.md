@@ -35,6 +35,8 @@ references/adr-decision-records.md  ADR 可选采用的备忘录（非流程，�
 references/adoption-model.md     采纳模型（三层）的备忘录（非流程）
 references/documentation-lifecycle.md  文档生命周期的可选备忘录（非流程）
 references/apply-to-project.md   应用到项目的模板与细则（用户触发，非流程）
+references/rationale.md          依据档案：规则背后的案例、统计、来龙去脉（非流程）
+scripts/check-docs.sh            文档检查入口：SKILL.md 体量护栏（正文字数、警示符、references 路径）
 ```
 
 ## 历史说明
