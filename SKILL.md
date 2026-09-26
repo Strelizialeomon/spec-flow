@@ -186,11 +186,11 @@ description: 复杂活的两段流程：方案期六步（描述需求 → 确�
 - 项目已有 `CLAUDE.md` → 只补一行 `@AGENTS.md` 导入（是单独一行、**不包反引号或代码块**——包了会静默失效，不报错不提示）；已存在则不重复追加。
 - 没有 `CLAUDE.md` → **不新建**。Claude Code 2.1.277+ 在项目无 `CLAUDE.md` 时原生读 `AGENTS.md`，kimi 也原生读它——新建一份反而多一个要维护的落点。
 
-**附加描述**：已注册修饰词 `adr`（行为见 `references/apply-to-project.md`）；**不认识的描述当场问用户，不猜**。
+**附加描述**：已注册修饰词 `adr`、`doc-lifecycle`（行为见 `references/apply-to-project.md`）；**不认识的描述当场问用户，不猜**。
 
 **旧副本 / 旧流程段**：检测到**逐字 / 整段摘抄副本**（通常是 `docs/spec-flow.md`）、或指令文件里已有**复述流程正文**的段落 → **报告给用户定夺，不自动删改**。判定口径（特征句、以及「只提名字的指针句不算」）见 `references/apply-to-project.md`。
 
-模板全文（判定树与幂等规则、指针块、`CLAUDE.md` 导入行、ADR 入口节、规则页骨架、附加描述规则、旧副本检测口径）在 `references/apply-to-project.md`——**照它取，别现编**。
+模板全文（判定树与幂等规则、指针块、`CLAUDE.md` 导入行、ADR 入口节、规则页骨架、文档读序节、附加描述规则、旧副本检测口径）在 `references/apply-to-project.md`——**照它取，别现编**。
 
 ## 参考（非流程）
 
@@ -207,7 +207,7 @@ ADR（跨任务长期决策记录）的可选做法记在 `references/adr-decisi
 
 「spec-flow 怎么被一个项目采用」（**只指向式** / 同步 + 指向 / 不引用 / 当场引用）的设计与历次演进记在 `references/adoption-model.md`——同样是备忘录，不是流程；采纳动作发生在项目侧，不发生在这份文件里。**新仓默认走只指向式**，由上面〈应用到项目〉产出。
 
-文档、spec、ADR、issue / PR 的分工、spec 基线后的变更分流，以及让现状文档少而新的几条约束，记在 `references/documentation-lifecycle.md`。**这是可选备忘录，默认不启用**；仅用户明确要求，或项目规则已声明采用时，才读取并执行。项目只留指针和本地 owner 映射，不复制本备忘录正文。
+文档、spec、ADR、issue / PR 的分工、spec 基线后的变更分流，以及现状文档「少而新」与 agent 默认读序的几条约束，记在 `references/documentation-lifecycle.md`。**这是可选备忘录，默认不启用**；仅用户明确要求，或项目规则已声明采用时，才读取并执行（采纳动作见 `references/apply-to-project.md` §八）。项目采用时只留指针、一行默认读序和本地 owner 映射，不复制本备忘录正文。
 
 ## 例外
 
