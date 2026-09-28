@@ -114,3 +114,20 @@
 | 「Providing context or motivation behind your instructions … can help Claude better understand your goals」；「Claude is smart enough to generalize from the explanation.」 | [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) | **理由不能挪走**：规则旁留一句「为什么」 |
 | 「The fix is to dial back any aggressive language.」；skill-creator：「If you find yourself writing ALWAYS or NEVER in all caps … that's a yellow flag」 | 同上；[anthropics/skills skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) | 警示符收敛到少数几条 |
 | IFScale 摘要：「bias towards earlier instructions」；Lost in the Middle 摘要：「performance is often highest when relevant information occurs at the beginning or end of the input context」 | [IFScale, arXiv 2507.11538](https://arxiv.org/abs/2507.11538)；[Lost in the Middle, arXiv 2307.03172](https://arxiv.org/abs/2307.03172) | 关键规则前置。坑：IFScale 测的是「keyword-inclusion instructions」，不是行为规则 |
+
+## R11 审核结论贴 PR 评论、改不改问用户（闸·执行时按老规矩）
+
+来源：#41 专项 spec `docs/specs/2026-09-28-review-comment-and-revision-card.md`（背景、D5、D8、D14）。
+
+- 主文件落点：闸节「执行时按老规矩」那条（贴评论 + 修订卡）、「长期授权与闸分家」那条（长期授权不免修订卡）。
+
+**现状（2026-09-28 实测）**：
+- 审核结论落点不一：#34、#35 贴在 PR 评论（「审核留档」）；#37 spec 期贴在 issue 评论；#37 实施期（PR #39）14 条没贴成 PR 评论，只有 PR 正文一节摘要、issue #37 回填评论一句、仓内 spec 末尾的逐条处置表。当时 `SKILL.md` 没有一句规定审核结论落哪。
+- 审完默认自动全改：#37 spec 期 16 条、实施期 14 条均由 agent 当日自行全数处置，经 owner 卡片确认的各只有 1 处。
+- 第 5 步旧措辞「按需要修订 → 开 PR 并合并」读起来是审完才开 PR；实际 #38 在 09:59 开 PR、10:15 才提交轻审修订——一直是先开 PR 再审。
+
+**owner 拍板（2026-09-28 对话，卡片记录）**：三条机制全要；修订卡只问一次整体「改 / 不改」，不逐条标推荐；评论审完立即贴一次，处置照旧记进 spec 末尾「审核修订记录」表，不再回帖。
+
+**为什么「原样」**：不改写、不删条、不降严重度——主 agent 转述会过滤或弱化对自己不利的发现。可加一行头（日期 · 档位 · agent 数 · 严重 / 一般 / 提示计数），沿用 #34、#35 的「审核留档」头。
+
+**为什么没答不合并，却不和闸卡「没点 → 不审、不阻塞」矛盾**：两张卡问的东西不一样。闸卡问的是花不花审核成本，不审是正当选择；修订卡问的是已知问题留不留，没答就合并 = 带着已知问题静默进主干。同理，「只含 spec / 文档的 PR 合并长期授权」只管合并动作要不要再问，不替用户回答修订卡。
