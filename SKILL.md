@@ -160,19 +160,20 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 
 执行五步：检测现状 → 判目标文件 → 写指针块 → 解析附加描述 → 报告结果。判定树、模板、幂等规则全在 `references/apply-to-project.md`，照它取，别现编。
 
-附加描述：已注册修饰词 `adr`、`doc-lifecycle`（行为见 `references/apply-to-project.md`）；**不认识的描述当场问用户，不猜**。
+附加描述：已注册修饰词 `adr`、`doc-lifecycle`、`issue-status`（行为见 `references/apply-to-project.md`）；**不认识的描述当场问用户，不猜**。
 
 检测到旧副本、或指令文件里复述流程正文的段落 → 报告用户定夺，不自动删改（判定口径见 `references/apply-to-project.md` §七）。
 
 ## 参考（非流程）
 
-都是备忘录、不是流程：
+都是备忘录、不是流程。标「可选」的默认不启用：仅用户明确要求或项目规则已声明采用时才读，不因项目复杂自行引入、不主动追问；采用落在项目自己的指令与文档、不复制正文，本 skill 不维护采用名单：
 
 | 备忘录 | 何时读 / 约束 |
 |---|---|
 | `references/split-large-spec.md` | spec 要拆成几份子 spec 时；两段流程不因它变形，要不要拆、怎么拆以当时说定的为准，没读照走 |
-| `references/adr-decision-records.md` | ADR（跨任务长期决策记录）：默认不启用，不因项目复杂自行引入、不主动追问；仅用户明确要求启用 / 接入、明确要求本次写 ADR，或项目规则已声明采用时读取执行；项目级采用必须把持久入口落在项目自己的指令与文档，本 skill 不维护采用名单 |
-| `references/documentation-lifecycle.md` | 文档 / spec / ADR / issue 分工与变更分流：默认不启用，仅用户明确要求或项目规则已声明采用时读取执行（采纳见 `references/apply-to-project.md` §八）；项目采用只留指针、一行默认读序和本地 owner 映射，不复制正文 |
+| `references/adr-decision-records.md` | 可选。ADR（跨任务长期决策记录）；用户明确要求本次写 ADR 时也读 |
+| `references/documentation-lifecycle.md` | 可选。文档 / spec / ADR / issue 分工与变更分流；项目另留一行默认读序和本地 owner 映射 |
+| `references/issue-status-labels.md` | 可选。issue 阶段 / 卡点标签、「下次看」行与盘点 |
 | `references/adoption-model.md` | 采纳模型的设计与演进，采纳动作在项目侧；新仓默认走只指向式，由〈应用到项目〉产出 |
 | `references/apply-to-project.md` | 〈应用到项目〉的模板全文 |
 | `references/rationale.md` | 各条规则的案例、统计、来龙去脉（R 编号）；新增规则的案例写这里 |
