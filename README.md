@@ -30,6 +30,11 @@ spec-flow 以前**活在 git 之外**：三处副本、零历史。2026-09-16 �
 
 ```
 SKILL.md                     流程正文
+AGENTS.md                    本仓维护规矩（CLAUDE.md 用 @AGENTS.md 导入）
+CLAUDE.md                    一行 @AGENTS.md
+references/gate-details.md   闸的细则：审核怎么执行、文档检查、一卡盖批（派审核 / 跑检查前读）
+references/worktree-lock.md  认领 issue 与锁：命令、撞锁、放锁、边界（认领时读）
+references/spec-revision-sync.md  修订 spec 时全文同步所有落点（第 5 步读）
 references/split-large-spec.md   拆大 spec 的备忘录（非流程）
 references/adr-decision-records.md  ADR 可选采用的备忘录（非流程，默认不启用）
 references/adoption-model.md     采纳模型（三层）的备忘录（非流程）

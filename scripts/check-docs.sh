@@ -2,7 +2,7 @@
 # spec-flow 文档检查入口（体量护栏）：SKILL.md 正文字数、警示符个数、references 路径是否存在。
 # 每项一行结果，末行「绿 / 红」；退出码 0 = 绿，1 = 红。依据见 references/rationale.md R10。
 
-BUDGET_CHARS=9200   # SKILL.md 正文字符数上限（口径：frontmatter 结束行之后到文件末，每行计换行）；9,200 为临时值，主文件重构 spec 收回
+BUDGET_CHARS=5000   # SKILL.md 正文字符数上限（口径：frontmatter 结束行之后到文件末，每行计换行）；约 4,300 token（2026-10-04 实测每字 0.86 token），压缩后整份留在前 5,000 token 内；依据 R10
 MAX_ALERTS=3        # SKILL.md 正文 ⚠️ + ⛔ 个数上限
 
 CDPATH= cd -- "$(dirname -- "$0")/.." || { echo "[红] 进不了仓根目录"; echo "红"; exit 1; }
