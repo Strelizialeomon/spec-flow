@@ -141,9 +141,10 @@
 - 主文件落点：「例外」与「闸」之间的〈已合并的 spec：动正文先问〉一节。
 
 **现状（2026-10-04 实测）**：
+- 以下数字是同日 20:23 jasmine-lottery PR #35 新开第二份 spec 之前的快照；PR #35 也改了旧 spec 正文 1 行（加「已被 ADR 取代」注），此后为 18 / 16 / 15。
 - jasmine-lottery 全仓只有 1 份 spec，09-30 建档 448 行，至 10-04 长到 762 行，`git log --follow` 共 17 个提交改过它；回填首个 Issue 号之后又有 15 个提交改它，只有 1 个是纯元信息回填，其余 14 个改了正文，其中至少 4 个是实施 PR。
 - 2026-10-04 会话：新需求拍板后，agent 回报「正在写需求文档的修订，同步各处引用『8 位码』和后台外观的地方」，准备直接改那份旧 spec；用户打断：「我们这是新需求，写新的 spec 和 adr，别老是改以前的 spec，越改越乱」。
-- 当时「定稿冻结、新需求另起 spec」只写在可选的 `references/documentation-lifecycle.md` §二，该项目只启用了 ADR，这条对它不生效；第 5 步「全文同步所有落点」没限定只在合并前，会话里「同步各处引用」正是照它在做。
+- 当时「定稿冻结、新需求另起 spec」只写在可选的 `references/documentation-lifecycle.md` §二，该项目只启用了 ADR，这条对它不生效（ADR 备忘录 §三第 5 条、§七第 4 条的「不回写历史 spec」管的是采用 ADR、改决定的场景，管不到新需求）；第 5 步「全文同步所有落点」没限定只在合并前，会话里「同步各处引用」正是照它在做。
 
 **调研**（2026-10-04 打开核对，原文与链接见专项 spec 调研表）：ADR 提出者 Nygard、Rust RFC、Python PEP 1 都是「定稿后不大改，大改新开一份、新旧互相标注」；OpenSpec 的「更新已有变更 vs 新开」判据可作卡上推荐项参考——「Intent fundamentally changed」「Original change can be marked "done" standalone」→ 新开；反例 Spec Kit 就地改 spec，前提是能自动重新生成实现，spec-flow 没有这一层。
 
