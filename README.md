@@ -35,7 +35,7 @@ CLAUDE.md                    一行 @AGENTS.md
 references/gate-details.md   闸的细则：审核怎么执行、文档检查、一卡盖批（派审核 / 跑检查前读）
 references/worktree-lock.md  认领 issue 与锁：命令、撞锁、放锁、边界（认领时读）
 references/spec-revision-sync.md  修订 spec 时全文同步所有落点（第 5 步读）
-references/split-large-spec.md   拆大 spec 的备忘录（非流程）
+references/split-large-spec.md   拆大 spec 的依赖闸细则：交付物地图、依赖台账、三阶段、止损（拆大 spec 时读）
 references/adr-decision-records.md  ADR 可选采用的备忘录（非流程，默认不启用）
 references/adoption-model.md     采纳模型（三层）的备忘录（非流程）
 references/documentation-lifecycle.md  文档生命周期的可选备忘录（非流程）
