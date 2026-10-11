@@ -229,7 +229,7 @@
 
 **现状（2026-09-24 实测 finance-workspace）**：一份大 spec 拆十二份、分 W0/W1/W2 三波（2026-09-22），每份头部都写着「母 spec：`docs/specs/2026-09-22-后端重构母spec.md`——设计权威，本文是其子件 N」；09-24 加的第 13 份（争议单并入本仓）从已完工的 ③（账号与鉴权）手里接走 SSO 票据、dispute 页签与 `web/src/pages/dispute/**` 的 owner，母 spec 记下了这笔转移（`2026-09-22-后端重构母spec.md:530-532`）。**没有返工**——要解的不是损失，是知情：地图和台账是一次性快照，开完子 spec 的 issue 就没人维护，后加的份会让它们过期，后来读的人拿的是旧账。
 
-**调研**（2026-10-11 读）：GitHub Docs《Creating issue dependencies》——依赖写成 blocked by / blocking，关系变化时可增删，显式关系用来暴露瓶颈；AWS Prescriptive Guidance《Architectural decision record process》——依赖和接口属架构重要决定，决策记录组成可追溯的 decision log，已接受的决策保持不可变，新洞见提新记录并把旧记录标 superseded；MADR——决策记录带状态、可链接其他记录。支持「依赖要有方向、可更新、能暴露瓶颈」，但**没有一条支持为一次单例另造强制闸**；「旧记录不静默改写」那条反过来说明：改总纲这类既成记录时，得让改本身可见。
+**调研**（2026-10-11 读）：GitHub Docs《Creating issue dependencies》（https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-issue-dependencies）——依赖写成 blocked by / blocking，关系变化时可增删，显式关系用来暴露瓶颈；AWS Prescriptive Guidance《Architectural decision record process》（https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html）——依赖和接口属架构重要决定，决策记录组成可追溯的 decision log，已接受的决策保持不可变，新洞见提新记录并把旧记录标 superseded；MADR（https://adr.github.io/madr/）——决策记录带状态、可链接其他记录。支持「依赖要有方向、可更新、能暴露瓶颈」，但**没有一条支持为一次单例另造强制闸**；「旧记录不静默改写」那条反过来说明：改总纲这类既成记录时，得让改本身可见。
 
 **A1 取舍（#64 岔路 A 案降一档）**：只做备忘录参考 + 本文件登记，不写进 `SKILL.md` 硬规则、不设硬闸。理由：单例——全仓只此一例且没出损失，本仓传统是单例先留档、不急着立规矩（第 1 节上收主文件是因为实测两轮都在同一处栽，与本条不同）；与既有「改旧 spec 卡」的边界也顺带理清了：地图和台账住在已合并总纲里，更新它本来就得先摆那张卡，本条不另造入口，只在卡片允许的那步补上「更新哪张表、新 spec 怎么承接权威记录」。
 
