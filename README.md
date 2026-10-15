@@ -74,7 +74,7 @@ Clauses carry a pointer like `（依据：rationale R12）` into `references/rat
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R18) |
+| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R20) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
@@ -85,7 +85,7 @@ Clauses carry a pointer like `（依据：rationale R12）` into `references/rat
 | `references/apply-to-project.md` | The pointer-block templates behind "apply to this project" |
 | `references/adoption-model.md` | Optional: the three-layer adoption model behind "apply to this project" |
 | `docs/maintainer-notes.md` | Repo-local notes: how this checkout is wired, why the first commits are reconstructed |
-| `scripts/check-docs.sh` | Document checks: SKILL.md budget, reference paths, README sync |
+| `scripts/check-docs.sh` | Document checks: SKILL.md budget, reference paths, README sync, adoption contract |
 
 The workflow itself is `SKILL.md`; where this README and that file disagree, `SKILL.md` wins. Which reference to read when is listed at the bottom of `SKILL.md`.
 

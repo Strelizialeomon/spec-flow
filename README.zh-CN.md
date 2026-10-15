@@ -74,7 +74,7 @@ spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：57 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R18） |
+| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R20） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
@@ -85,7 +85,7 @@ spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：57 个
 | `references/apply-to-project.md` | 「应用到项目」用的指针块模板 |
 | `references/adoption-model.md` | 可选：「应用到项目」背后的三层采纳模型 |
 | `docs/maintainer-notes.md` | 本仓自己的说明：这份检出怎么接的线、最早的提交为什么是重建的 |
-| `scripts/check-docs.sh` | 文档检查：SKILL.md 体量、references 路径、README 双语同步 |
+| `scripts/check-docs.sh` | 文档检查：SKILL.md 体量、references 路径、README 双语同步、采用契约 |
 
 流程正文是 `SKILL.md`——这份 README 与它说法不一致时，以 `SKILL.md` 为准。哪个参考什么时候读，见 `SKILL.md` 末尾那张表。
 
