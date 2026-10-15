@@ -1,57 +1,98 @@
 # spec-flow
 
-自建的流程规矩：复杂活（要设计、动多个端、值得留可回溯依据的）走**两段流程**（方案期 + 实施期，共用一道合并闸）。
+A two-phase workflow for AI coding agents: settle the spec before any code gets written, and let the human — not the agent — decide how much review each deliverable gets.
 
-两段是哪两段、每步怎么走，**以 `SKILL.md` 为准**——这份 README 不列顺序，免得两处各说各话。
+**English** · [中文](README.zh-CN.md)
 
-## 这个仓为什么存在
+> The workflow itself is written in Chinese (`SKILL.md` and `references/`). This README is the English entry point, so you can tell whether it's for you before opening anything.
 
-spec-flow 以前**活在 git 之外**：三处副本、零历史。2026-09-16 追一条规矩的
-来历时，这个洞露出来了——`~/.claude` 不是 git 仓，"谁写的、什么时候写的"
-全追不出来，只能翻会话记录倒推，推到 2026-08-24 就到头了。
+<!-- s:problem -->
+## The problem
 
-现在它是个正常的 git 仓：**谁改了它，`git log` 一句话就能看见。**
+Agents are good at producing work and bad at stopping to align first. Left alone they will:
 
-## 真身在这里，别改别处
+- start coding from a half-formed request, and you only meet the misunderstanding in the diff;
+- finish a large chunk in one go, so one wrong turn costs the whole chunk;
+- report "an independent reviewer checked this" when the reviewer was a subagent they spawned, prompted, and framed themselves.
 
-**这份 `~/code/spec-flow` 是唯一真身。** 三处 skill 目录都是指向它的符号链接：
+<!-- s:what -->
+## What it does
 
-| 位置 | 谁读 |
+spec-flow is not a code generator. It's a set of process rules — one markdown file plus references — that the agent loads before doing work worth designing. Two phases, one shared gate:
+
+- **Phase 1 · design** — describe the need → agree on it → the agent writes a spec → the spec goes through a PR and the gate → merge → the spec gets its own issue. No code yet.
+- **Phase 2 · implementation** — claim the issue (the git worktree *is* the lock) → implement → gate → merge → backfill the issue and release the lock.
+
+At the gate, the agent lays out the review levels (none / light / heavy / heavy + mutation testing) and **you** pick one. It never picks for you, and "no answer" is never treated as approval.
+
+<!-- s:self-review -->
+## The part worth stealing: a subagent is not a second opinion
+
+Everything the agent spawns is still the agent — same task, same prompt, same framing, chosen by the party who wants the green light. So a subagent's conclusions weigh exactly as much as the agent's own. No more.
+
+spec-flow therefore forbids the agent from producing a review verdict on its own behalf, and forbids it from borrowing authority ("an independent reviewer approved this") when it asks you to sign off. When a step genuinely needs an opinion that isn't the agent's, that step stops and waits for a human.
+
+<!-- s:install -->
+## Install
+
+```bash
+git clone https://github.com/Strelizialeomon/spec-flow.git ~/.claude/skills/spec-flow
+```
+
+That's the whole install — Claude Code loads personal skills from `~/.claude/skills/<name>/SKILL.md`. Updating is `git pull` inside that directory.
+
+If you keep your repos elsewhere (as the author does), clone anywhere and symlink it in:
+
+```bash
+git clone https://github.com/Strelizialeomon/spec-flow.git ~/code/spec-flow
+ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
+```
+
+Requirements: an agent that can read a skills directory, run shell commands (`git worktree`), and open PRs (`gh`). Verified with Claude Code; the content is plain markdown, so any harness with a skills directory can read it. The workflow assumes GitHub.
+
+<!-- s:usage -->
+## Using it
+
+Trigger it by describing work that deserves designing — "this touches the API, the DB and the frontend" — or invoke it by name. From there the agent asks about the forks it cannot decide, writes a spec to `docs/specs/<date>-<name>.md`, opens a PR, and hands you a review card.
+
+You can also enter from the middle: "do #12" starts phase 2 for an existing issue, and still passes the gate before merging.
+
+To adopt it in one of your own repos, say *"apply spec-flow to this project"*. It writes a pointer block into that repo's `AGENTS.md` / `CLAUDE.md` — pointing here rather than copying the rules, so there is only ever one copy to maintain.
+
+<!-- s:evidence -->
+## This repo is its own case study
+
+spec-flow is developed with spec-flow: 109 commits, 54 merged PRs, 14 issues, 13 specs in `docs/specs/` since 2026-09-22. Each spec is the design record of one change, and the PR discussion holds the review findings for it.
+
+Every rule carries a number — `（依据：rationale R16）` — pointing into `references/rationale.md`, where the case, the statistic or the research behind it lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
+
+<!-- s:docs -->
+## Files
+
+| File | What's in it |
 |---|---|
-| `~/.claude/skills/spec-flow` | Claude Code |
-| `~/.agents/skills/spec-flow` | 经由上面那条链过去 |
-| `~/.kimi-code/skills/spec-flow` | kimi |
+| `SKILL.md` | The workflow itself — the file the agent loads |
+| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R17) |
+| `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
+| `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
+| `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
+| `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
+| `references/adr-decision-records.md` | Optional: architecture decision records |
+| `references/documentation-lifecycle.md` | Optional: spec / ADR / issue division of labour |
+| `references/issue-status-labels.md` | Optional: issue status labels |
+| `references/apply-to-project.md` | The pointer-block templates behind "apply to this project" |
+| `references/adoption-model.md` | The adoption model's history |
+| `docs/maintainer-notes.md` | Repo-local notes: how this checkout is wired, why the first commits are reconstructed |
+| `scripts/check-docs.sh` | Document checks: SKILL.md budget, reference paths, README sync |
 
-**要改就改这里，改完三处一起生效。** 反过来说：三处都是软链，改哪都是改真身，不存在
-「有人偷偷改了某一份副本」——真出问题只会是一种：某处的软链被换成了真目录，从此和这里脱钩。
-发现就删掉那个真目录、把软链建回去。
+Which reference to read when is listed at the bottom of `SKILL.md`.
 
-## 目录
+<!-- s:contributing -->
+## Contributing
 
-```
-SKILL.md                     流程正文
-AGENTS.md                    本仓维护规矩（CLAUDE.md 用 @AGENTS.md 导入）
-CLAUDE.md                    一行 @AGENTS.md
-references/gate-details.md   闸的细则：审核怎么执行、文档检查、一卡盖批（派审核 / 跑检查前读）
-references/worktree-lock.md  认领 issue 与锁：命令、撞锁、放锁、边界（认领时读）
-references/spec-revision-sync.md  修订 spec 时全文同步所有落点（第 5 步读）
-references/split-large-spec.md   拆大 spec 的依赖闸细则：交付物地图、依赖台账、三阶段、止损（拆大 spec 时读）
-references/adr-decision-records.md  ADR 可选采用的备忘录（非流程，默认不启用）
-references/adoption-model.md     采纳模型（三层）的备忘录（非流程）
-references/documentation-lifecycle.md  文档生命周期的可选备忘录（非流程）
-references/issue-status-labels.md  issue 状态标签的可选备忘录（非流程，默认不启用）
-references/apply-to-project.md   应用到项目的模板与细则（用户触发，非流程）
-references/rationale.md          依据档案：规则背后的案例、统计、来龙去脉（非流程）
-scripts/check-docs.sh            文档检查入口：SKILL.md 体量护栏（正文字数、警示符、references 路径）
-```
+Keep it small. Open an issue, or send a PR. One convention: if your change adds or alters a rule, record the case behind it in `references/rationale.md` under a new `R` number — rules here are supposed to be able to point at something that actually happened.
 
-## 历史说明
+<!-- s:license -->
+## License
 
-前两个提交是**事后重建**的，不是当时真实发生的提交：
-
-| 提交 | 对应时间 | 怎么来的 |
-|---|---|---|
-| 1 | 2026-09-10 | 从 `~/.kimi-code/skills/spec-flow/.backup/` 里捞回的最早一份真实副本 |
-| 2 | 2026-09-15 | 建仓当天三处副本的实际内容 |
-
-再往前的历史找不回来了——那段时期它压根没有版本记录。从提交 3 开始才是真实记录。
+MIT — see [LICENSE](LICENSE).
