@@ -62,7 +62,7 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 <!-- s:evidence -->
 ## 本仓自己就是样板
 
-spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：54 个已合并 PR、14 个 issue、13 份 spec（`docs/specs/`），自 2026-09-22 跑起。每份 spec 是一次改动的设计记录，PR 的讨论里留着对它做的审核发现。
+spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：57 个已合并 PR、15 个 issue、14 份 spec（`docs/specs/`），自 2026-09-22 跑起。每份 spec 是一次改动的设计记录，PR 的讨论里留着对它做的审核发现。
 
 规矩旁边带着依据指针（如 `（依据：rationale R12）`），指向 `references/rationale.md`，案例、统计或调研在那里。想知道一条流程规矩**为什么**长这样、而不只是它写了什么，那个文件就是读这个仓的理由。
 
