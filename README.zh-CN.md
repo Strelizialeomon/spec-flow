@@ -74,7 +74,7 @@ spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：54 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R17） |
+| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R18） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |

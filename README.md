@@ -74,7 +74,7 @@ Clauses carry a pointer like `（依据：rationale R12）` into `references/rat
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R17) |
+| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R18) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
