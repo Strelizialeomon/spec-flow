@@ -62,7 +62,7 @@ To adopt it in one of your own repos, say *"apply spec-flow to this project"*. I
 <!-- s:evidence -->
 ## This repo is its own case study
 
-spec-flow is developed with spec-flow: 109 commits, 54 merged PRs, 14 issues, 13 specs in `docs/specs/` since 2026-09-22. Each spec is the design record of one change, and the PR discussion holds the review findings for it.
+spec-flow is developed with spec-flow. As of 2026-10-15 that's 109 commits, 54 merged PRs, 14 issues and 13 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
 
 Every rule carries a number — `（依据：rationale R16）` — pointing into `references/rationale.md`, where the case, the statistic or the research behind it lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
 
