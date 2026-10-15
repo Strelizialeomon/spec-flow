@@ -23,7 +23,7 @@ spec-flow is not a code generator. It's a set of process rules — one markdown 
 - **Phase 1 · design** — describe the need → agree on it → the agent writes a spec → the spec goes through a PR and the gate → merge → the spec gets its own issue. No code yet.
 - **Phase 2 · implementation** — claim the issue (the git worktree *is* the lock) → implement → gate → merge → backfill the issue and release the lock.
 
-At the gate, the agent lays out the review levels (none / light / heavy / heavy + mutation testing) and **you** pick one. It never picks for you, and "no answer" is never treated as approval.
+At the gate, the agent lays out the review levels (none / light / heavy / heavy + mutation testing) and **you** pick one. It never picks for you — an unanswered review card falls back to *no review*, and for the cards that govern a merge or the fate of a known problem, no answer means no merge.
 
 <!-- s:self-review -->
 ## The part worth stealing: a subagent is not a second opinion
@@ -57,14 +57,14 @@ Trigger it by describing work that deserves designing — "this touches the API,
 
 You can also enter from the middle: "do #12" starts phase 2 for an existing issue, and still passes the gate before merging.
 
-To adopt it in one of your own repos, say *"apply spec-flow to this project"*. It writes a pointer block into that repo's `AGENTS.md` / `CLAUDE.md` — pointing here rather than copying the rules, so there is only ever one copy to maintain.
+To adopt it in one of your own repos, say *"apply spec-flow to this project"*. It writes a pointer block into that repo's `AGENTS.md` — adding the one-line `@AGENTS.md` import to `CLAUDE.md`, and only when that file already exists — pointing here rather than copying the rules, so there is only ever one copy to maintain.
 
 <!-- s:evidence -->
 ## This repo is its own case study
 
-spec-flow is developed with spec-flow. As of 2026-10-15 that's 109 commits, 54 merged PRs, 14 issues and 13 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
+spec-flow is developed with spec-flow. As of 2026-10-15: 54 merged PRs, 14 issues, 13 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
 
-Every rule carries a number — `（依据：rationale R16）` — pointing into `references/rationale.md`, where the case, the statistic or the research behind it lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
+Clauses carry a pointer like `（依据：rationale R12）` into `references/rationale.md`, where the case, the statistic or the research behind that rule lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
 
 <!-- s:docs -->
 ## Files
@@ -72,6 +72,8 @@ Every rule carries a number — `（依据：rationale R16）` — pointing into
 | File | What's in it |
 |---|---|
 | `SKILL.md` | The workflow itself — the file the agent loads |
+| `AGENTS.md` | This repo's maintenance rules for the agent |
+| `CLAUDE.md` | One line: `@AGENTS.md` |
 | `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R17) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
@@ -81,11 +83,11 @@ Every rule carries a number — `（依据：rationale R16）` — pointing into
 | `references/documentation-lifecycle.md` | Optional: spec / ADR / issue division of labour |
 | `references/issue-status-labels.md` | Optional: issue status labels |
 | `references/apply-to-project.md` | The pointer-block templates behind "apply to this project" |
-| `references/adoption-model.md` | The adoption model's history |
+| `references/adoption-model.md` | Optional: the three-layer adoption model behind "apply to this project" |
 | `docs/maintainer-notes.md` | Repo-local notes: how this checkout is wired, why the first commits are reconstructed |
 | `scripts/check-docs.sh` | Document checks: SKILL.md budget, reference paths, README sync |
 
-Which reference to read when is listed at the bottom of `SKILL.md`.
+The workflow itself is `SKILL.md`; where this README and that file disagree, `SKILL.md` wins. Which reference to read when is listed at the bottom of `SKILL.md`.
 
 <!-- s:contributing -->
 ## Contributing

@@ -23,7 +23,7 @@ agent 很会产出，很不擅长先对齐。不管它，它会：
 - **段一 · 方案期** —— 描述需求 → 一起确认需求 → agent 出 spec → spec 过 PR 和闸 → 合并 → 开 issue。此时一行代码都不写。
 - **段二 · 实施期** —— 认领 issue（worktree 本身就是那把锁）→ 实施 → 过闸 → 合并 → 回填 issue、放锁。
 
-到闸前，agent 把审核档位摆出来（不审 / 轻审 / 重审 / 重审 + 变异），**由你点**。它不替你点，也不会把「你没答」当成放行。
+到闸前，agent 把审核档位摆出来（不审 / 轻审 / 重审 / 重审 + 变异），**由你点**。它不替你点——档位卡没答就按「不审」走；而管合并、管已发现问题去留的卡，没答就不合。
 
 <!-- s:self-review -->
 ## 最值得拿走的一条：分身不是第二个人
@@ -57,14 +57,14 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 
 也可以从中间进：说「做 #12」就从段二开始，同样要过闸才能合。
 
-想把它用到自己的仓里，说「把 spec-flow 应用到本项目」。它往那个仓的 `AGENTS.md` / `CLAUDE.md` 里写一段指针——指向这里，而不是抄一份正文，所以规矩永远只有一份。
+想把它用到自己的仓里，说「把 spec-flow 应用到本项目」。它往那个仓的 `AGENTS.md` 里写一段指针（只有在那个仓已有 `CLAUDE.md` 时，才往 `CLAUDE.md` 补一行 `@AGENTS.md` 导入）——指向这里，而不是抄一份正文，所以规矩永远只有一份。
 
 <!-- s:evidence -->
 ## 本仓自己就是样板
 
-spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：109 次提交、54 个已合并 PR、14 个 issue、13 份 spec（`docs/specs/`），自 2026-09-22 跑起。每份 spec 是一次改动的设计记录，PR 的讨论里留着对它做的审核发现。
+spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：54 个已合并 PR、14 个 issue、13 份 spec（`docs/specs/`），自 2026-09-22 跑起。每份 spec 是一次改动的设计记录，PR 的讨论里留着对它做的审核发现。
 
-每条规矩都带一个编号——`（依据：rationale R16）`——指向 `references/rationale.md`，案例、统计或调研在那里。想知道一条流程规矩**为什么**长这样、而不只是它写了什么，那个文件就是读这个仓的理由。
+规矩旁边带着依据指针（如 `（依据：rationale R12）`），指向 `references/rationale.md`，案例、统计或调研在那里。想知道一条流程规矩**为什么**长这样、而不只是它写了什么，那个文件就是读这个仓的理由。
 
 <!-- s:docs -->
 ## 文件
@@ -72,6 +72,8 @@ spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：109 �
 | 文件 | 装什么 |
 |---|---|
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
+| `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
+| `CLAUDE.md` | 一行 `@AGENTS.md` |
 | `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R17） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
@@ -81,11 +83,11 @@ spec-flow 是用 spec-flow 开发的。2026-10-15 这个时点的账面：109 �
 | `references/documentation-lifecycle.md` | 可选：spec / ADR / issue 分工 |
 | `references/issue-status-labels.md` | 可选：issue 状态标签 |
 | `references/apply-to-project.md` | 「应用到项目」用的指针块模板 |
-| `references/adoption-model.md` | 采纳模型的来龙去脉 |
+| `references/adoption-model.md` | 可选：「应用到项目」背后的三层采纳模型 |
 | `docs/maintainer-notes.md` | 本仓自己的说明：这份检出怎么接的线、最早的提交为什么是重建的 |
 | `scripts/check-docs.sh` | 文档检查：SKILL.md 体量、references 路径、README 双语同步 |
 
-哪个参考什么时候读，见 `SKILL.md` 末尾那张表。
+流程正文是 `SKILL.md`——这份 README 与它说法不一致时，以 `SKILL.md` 为准。哪个参考什么时候读，见 `SKILL.md` 末尾那张表。
 
 <!-- s:contributing -->
 ## 参与

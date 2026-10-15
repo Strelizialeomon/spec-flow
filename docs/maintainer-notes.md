@@ -18,8 +18,9 @@ ln -s ~/.claude/skills/spec-flow ~/.agents/skills/spec-flow        # 共享 skil
 发现就删掉那个真目录、把软链建回去。
 
 ⚠️ **别把上面这块扩成「哪台机器接了哪条链」的登记表**——本仓最容易烂的就是这种东西。
-2026-10-15 实测：旧 `README.md` 里那张表已经烂了一条（`~/.kimi-code/skills/spec-flow` 指向的目录
-在本机整个不存在，kimi 早卸了），而当天真在用的 `~/.codex/skills` 从没写进去过。
+2026-10-15 实测：旧 `README.md` 里那张表已经烂了一条——`~/.kimi-code/skills/spec-flow` 指向的目录
+在本机整个不存在（`~/.kimi-code` 没有，`which kimi` 也找不到）。本机另有 `~/.codex/skills` 这个
+skills 根，那张表里也从没提过（它下面只有 `.system`，并没有接 spec-flow）。
 链的实际状态当场看（`readlink` / `ls -l`），别信文档（依据：rationale R17、R9）。
 
 ## 历史说明
