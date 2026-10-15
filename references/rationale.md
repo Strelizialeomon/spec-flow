@@ -257,9 +257,9 @@
 
 ## R18 完成标准与长尾验收（主文件·各步要点 ＋ 卡片总表·例外卡）
 
-来源：#71 专项 spec `docs/specs/2026-10-15-done-criteria-and-longtail-closeout.md`（背景、现状表、调研表、机制清单、规则正文、预算账、D1–D7）。
+来源：#71 专项 spec `docs/specs/2026-10-15-done-criteria-and-longtail-closeout.md`（背景、现状表、调研表、机制清单、规则正文、预算账、自定细节 1–7）。
 
-- 主文件落点：〈各步要点〉新增的「完成标准与长尾验收」段（带一句理由 + 本指针，放在「第 2/3 步·两张清单」之后）、卡片总表在「改旧 spec 卡」之前新增「例外卡」行。**动作侧仍留在选修层**：`references/issue-status-labels.md` 三处判据句改指路、§三 答案表改三分支、「待验证」语义扩义；采纳步骤在 `references/apply-to-project.md` §九（指针模板末行、两处标签 description、第 1 步新增「旧描述对齐」条）。
+- 主文件落点：〈各步要点〉新增的「完成标准与长尾验收」段（带一句理由 + 本指针，放在「第 2/3 步·两张清单」之后）、卡片总表在「改旧 spec 卡」之前新增「例外卡」行；两份 README 的 R 区间随本条同步为 R1–R18。**动作侧仍留在选修层**：`references/issue-status-labels.md` 三处判据句改指路、§三 答案表改三分支、「待验证」语义扩义；采纳步骤在 `references/apply-to-project.md` §九（指针模板末行、两处标签 description、第 1 步新增「旧描述对齐」条）。
 
 **现状（2026-10-15 实测）**：
 
