@@ -1,9 +1,9 @@
 # spec-flow 低副作用边界与 PR 关单语义——备忘录采用和 issue 生命周期后继约束
 
 - 日期：2026-10-15
-- 状态：方案期（已过闸：轻审 9 条发现，用户裁定「改」，已逐条处置——见 §9）
+- 状态：实施期（方案期已过闸：轻审 9 条发现逐条处置，见 §9；实施 PR 待过闸）
 - 决策人：用户；两个新增需求合并为本后继 spec
-- Issue：待本 spec PR 合并后开
+- Issue：[#78](https://github.com/Strelizialeomon/spec-flow/issues/78)
 - 后继关系：本 spec 后继 [PR #74：可选备忘录采用契约 spec](https://github.com/Strelizialeomon/spec-flow/pull/74) 及其**已落地的实施**（PR #76，issue #75）——两者均已合并进 main
 - 适用决定：无（检索词：脚本、apply-to-project、Closes、Fixes、Resolves、关单、issue 生命周期、备忘录采用）
 - 本次决策记录：尚未形成（本 spec 先提出边界；用户批准后与实施变更同批新增 / 取代相应 ADR）
