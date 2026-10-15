@@ -62,7 +62,7 @@ To adopt it in one of your own repos, say *"apply spec-flow to this project"*. I
 <!-- s:evidence -->
 ## This repo is its own case study
 
-spec-flow is developed with spec-flow. As of 2026-10-15: 54 merged PRs, 14 issues, 13 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
+spec-flow is developed with spec-flow. As of 2026-10-15: 57 merged PRs, 15 issues, 14 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
 
 Clauses carry a pointer like `（依据：rationale R12）` into `references/rationale.md`, where the case, the statistic or the research behind that rule lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
 
