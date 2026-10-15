@@ -309,6 +309,8 @@
 
 **为什么 dogfood 只在临时假仓跑、产物落 PR 正文**：本仓 2026-09-22（`docs/specs/2026-09-22-apply-to-project.md:80`）与 09-23（`docs/specs/2026-09-23-two-segments-one-gate.md:111`）两次先例；采用动作会写项目指令、建目录和标签，**拿真实采用项目当靶子就是改别人的仓**。产物落 PR 正文，读 PR 的人不点开假仓也能核。
 
+**2026-10-15 补充**：`MEMO_FIELDS` 原先只认六个字段，而〈备忘录正文开头的最低元数据〉模板在 R21 之后有第七项「项目资产」——契约两侧不同形（照模板写的备忘录有这行，检查器不认）。已把「项目资产」并进 `MEMO_FIELDS`。反例实测：删掉 `references/issue-status-labels.md` 里的该行 → 检查红并点名「采用口径缺：项目资产」；恢复 → 绿。备忘录侧这行是给 agent 读的镜像，**权威登记面仍是 §十 登记表的同名字段**（`FIELDS` 一直认它）——所以这条是补一致性，不是补漏洞。
+
 ## R21 默认项目资产边界与可执行资产升级闸（`references/apply-to-project.md` §十；主文件·应用到项目；三个备忘录的「采用口径」区块）
 
 来源：2026-10-15 低副作用边界与 PR 关单语义 spec（`docs/specs/2026-10-15-script-boundary-and-issue-close-semantics.md`，PR #77 合并，实施 issue #78）。
