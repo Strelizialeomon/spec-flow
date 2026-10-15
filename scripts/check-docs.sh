@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # spec-flow 文档检查入口：SKILL.md 正文字数、警示符个数、references 路径是否存在、
-# README 双语是否同步（节标记一一对应、references 文件两份都点到）。
-# 每项一行结果，末行「绿 / 红」；退出码 0 = 绿，1 = 红。依据见 references/rationale.md R10、R17。
+# README 双语是否同步（节标记一一对应、references 文件两份都点到）、采用契约两侧是否对应。
+# 每项一行结果，末行「绿 / 红」；退出码 0 = 绿，1 = 红。依据见 references/rationale.md R10、R17、R19。
 
 BUDGET_CHARS=5000   # SKILL.md 正文字符数上限（口径：frontmatter 结束行之后到文件末，每行计换行）；约 4,300 token（2026-10-04 实测每字 0.86 token），压缩后整份留在前 5,000 token 内；依据 R10
 MAX_ALERTS=3        # SKILL.md 正文 ⚠️ + ⛔ 个数上限
@@ -153,6 +153,87 @@ try:
                             if not exists_exact(p)})
             report(not bogus, "README 里点到的 references 路径都存在" if not bogus
                    else "README 里点到的路径不存在：" + "、".join(bogus))
+    # ── 采用契约（依据 R19）：SKILL.md 中央登记 ↔ apply-to-project.md §十 登记表，两侧必须一一对应 ──
+    # 只认登记区：SKILL.md 参考表里带「选修」的行 + apply-to-project.md §十 的 `#### ` 表；
+    # 围栏代码块里的示例（采用口径模板等）一律跳过，历史 spec 不在扫描范围内。
+    def unfenced(text):
+        out, fence = [], None
+        for line in text.splitlines():
+            st = line.lstrip()
+            if fence:
+                if st.startswith(fence):
+                    fence = None
+                continue
+            if st.startswith("```") or st.startswith("~~~"):
+                fence = st[:3]
+                continue
+            out.append(line)
+        return out
+
+    FIELDS = {"修饰词", "语义变体", "项目入口", "项目资产", "执行时点", "验收方式", "幂等规则", "旧物处置"}
+    MEMO_FIELDS = ["默认", "本次按需读取", "项目级采用", "项目入口", "执行时点", "验收"]
+    problems, skill_mods, memos = [], {}, []
+    for line in unfenced(body):
+        if not line.startswith("| `references/") or "选修" not in line:
+            continue
+        m = re.match(r"\|\s*`(references/[^`]+\.md)`\s*\|(.*)\|\s*$", line)
+        if not m:
+            problems.append(f"参考表选修行格式不认：{line[:32]}…")
+            continue
+        path, rest = m.group(1), m.group(2)
+        memos.append(path)
+        mod = re.search(r"采用走 `([a-z0-9-]+)`", rest)
+        if mod:
+            skill_mods[mod.group(1)] = path
+        elif "仅本次按需" not in rest:
+            problems.append(f"{path}：既没有「采用走 `<modifier>`」也没写「仅本次按需」")
+        for kw in ("默认关闭", "读取"):
+            if kw not in rest:
+                problems.append(f"{path}：行内缺「{kw}」")
+    try:
+        ap_text = open("references/apply-to-project.md", encoding="utf-8", newline="").read()
+    except OSError:
+        ap_text = ""
+        problems.append("references/apply-to-project.md 读不到")
+    sec = ap_text[ap_text.index("## 十、采用契约"):] if "## 十、采用契约" in ap_text else ""
+    if not sec:
+        problems.append("apply-to-project.md 没有 §十 采用契约")
+    reg_mods, cur = {}, None
+    for line in unfenced(sec):
+        h = re.fullmatch(r"#### `([a-z0-9-]+)`", line.strip())
+        if h:
+            cur = h.group(1)
+            reg_mods[cur] = set()
+            continue
+        if cur:
+            cell = re.match(r"\|\s*([^|]+?)\s*\|", line)
+            if cell:
+                reg_mods[cur].add(cell.group(1))
+    for mod, got in sorted(reg_mods.items()):
+        miss = FIELDS - got
+        if miss:
+            problems.append(f"修饰词 `{mod}` 登记表缺字段：{'、'.join(sorted(miss))}")
+    for mod in sorted(set(skill_mods) - set(reg_mods)):
+        problems.append(f"`{mod}` 在 SKILL.md 登记、§十 没有登记表")
+    for mod in sorted(set(reg_mods) - set(skill_mods)):
+        problems.append(f"`{mod}` 在 §十 有登记表、SKILL.md 没登记")
+    for path in memos:
+        if not exists_exact(path):
+            continue          # 路径不存在由上面那项单独报
+        t = open(path, encoding="utf-8", newline="").read()
+        if "## 采用口径" not in t:
+            problems.append(f"{path} 缺「采用口径」区块")
+            continue
+        block = t[t.index("## 采用口径"):]
+        nxt = block.find("\n## ", 3)
+        if nxt != -1:
+            block = block[:nxt]
+        miss = [f for f in MEMO_FIELDS if f not in block]
+        if miss:
+            problems.append(f"{path} 采用口径缺：{'、'.join(miss)}")
+    report(not problems, f"采用契约：{len(skill_mods)} 个选修备忘录 ↔ {len(reg_mods)} 个注册修饰词" +
+           ("，登记字段齐全" if not problems else "：" + "；".join(problems)))
+
 except Exception as e:  # 跑崩也算红，原因写出来
     report(False, f"检查跑崩了：{e!r}")
 

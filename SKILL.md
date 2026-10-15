@@ -22,8 +22,6 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 8. **在 worktree 里实施**
 9. **过闸 → 合并 → 回填** —— 回填 issue、关单、放锁
 
-要用户点的卡见「卡片总表」，能免什么见「豁免总表」，各步细节见「各步要点」。
-
 ## 卡片总表
 
 凡要用户拍板都摆选择卡让用户点，不打字问是非题。
@@ -100,13 +98,13 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 
 ## 应用到项目
 
-用户说「把 spec-flow 应用到（本）项目」（可带附加描述，如「同时启用 ADR」）或显式 `/skill:spec-flow 应用到项目 …` 时，把目标项目切成只指向 spec-flow 的形态：只放指针、不放副本；没被要求不主动做。五步：检测现状 → 判目标文件 → 写指针块 → 解析附加描述 → 报告结果，照 `references/apply-to-project.md` 执行，已注册修饰词 `adr`、`doc-lifecycle`、`issue-status`；不认识的附加描述当场问，发现旧副本或复述流程正文的段落只报告、不自动删改（口径见同文件 §七）。
+用户说「把 spec-flow 应用到（本）项目」（可带附加描述）或显式 `/skill:spec-flow 应用到项目 …` 时，把目标项目切成只指向 spec-flow 的形态：只放指针、不放副本；没被要求不主动做。五步：检测现状 → 判目标文件 → 写指针块 → 解析附加描述 → 报告结果，照 `references/apply-to-project.md` 执行，已注册修饰词与登记表见该文件 §十；不认识的附加描述当场问，发现旧副本或复述流程正文的段落只报告、不自动删改（口径见同文件 §七）。
 
 ## 项目体例与参考
 
 项目专属体例（spec 目录、issue 标题、标签、正文节序）以该项目的 `AGENTS.md` / `CLAUDE.md` 或 agent 记忆为准，有就照它写。
 
-参考默认是备忘录、不是流程——**例外是 `split-large-spec.md`**：它的第 1~6 节依赖闸细则（交付物地图、依赖台账、三阶段、止损、子 spec 声明、审核清单）已在〈各步要点〉里写明是必须的，其余部分（六条旧做法、历史案例、配套）仍是参考；标「可选」的只在用户明确要求或项目规则已声明采用时才读，不因项目复杂自行引入、不主动追问；采用落在项目自己的指令与文档，不复制正文。
+参考默认是备忘录、不是流程——**例外是 `split-large-spec.md`**：它的第 1~6 节依赖闸细则（交付物地图、依赖台账、三阶段、止损、子 spec 声明、审核清单）已在〈各步要点〉里写明是必须的，其余部分（六条旧做法、历史案例、配套）仍是参考；标「选修」的不因项目复杂自行引入、不主动追问，读取条件与采用动作写在各行。
 
 | 文件 | 何时读 |
 |---|---|
@@ -114,9 +112,9 @@ description: "复杂活的两段流程：方案期六步（描述需求 → 确�
 | `references/worktree-lock.md` | 认领、撞锁、放锁时 |
 | `references/spec-revision-sync.md` | 第 5 步修订 spec 时 |
 | `references/split-large-spec.md` | spec 要拆成几份子 spec 时 |
-| `references/adr-decision-records.md` | 可选。ADR；用户明确要求本次写 ADR 时也读 |
-| `references/documentation-lifecycle.md` | 可选。文档 / spec / ADR / issue 分工 |
-| `references/issue-status-labels.md` | 可选。issue 阶段 / 卡点标签与盘点 |
+| `references/adr-decision-records.md` | 选修，默认关闭；用户本次明确要求或项目规则声明已采用时读取；采用走 `adr`；ADR 决策记录 |
+| `references/documentation-lifecycle.md` | 选修，默认关闭；用户本次明确要求或项目规则声明已采用时读取；采用走 `doc-lifecycle`；文档 / spec / ADR / issue 分工 |
+| `references/issue-status-labels.md` | 选修，默认关闭；用户本次明确要求或项目规则声明已采用时读取；采用走 `issue-status`；issue 阶段 / 卡点标签与盘点 |
 | `references/apply-to-project.md` | 〈应用到项目〉时 |
 | `references/adoption-model.md` | 想了解采纳模型的来龙去脉时 |
 | `references/rationale.md` | 想知道某条规矩为什么这样定时（R 编号） |
