@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # spec-flow 文档检查入口：SKILL.md 正文字数、警示符个数、references 路径是否存在、
 # README 双语是否同步（节标记一一对应、references 文件两份都点到）、采用契约两侧是否对应。
-# 每项一行结果，末行「绿 / 红」；退出码 0 = 绿，1 = 红。依据见 references/rationale.md R10、R17、R19。
+# 同时核 frontmatter / 整份预算，禁止把规则搬进元信息绕正文预算（依据 R25）。
+# 每项一行结果，末行「绿 / 红」；退出码 0 = 绿，1 = 红。依据见 references/rationale.md R10、R17、R19、R25。
 
-BUDGET_CHARS=5000   # SKILL.md 正文字符数上限（口径：frontmatter 结束行之后到文件末，每行计换行）；约 4,300 token（2026-10-04 实测每字 0.86 token），压缩后整份留在前 5,000 token 内；依据 R10
+BUDGET_CHARS=4700   # 本次交付正文预算；含换行、按字符计，原 5,000 上限不上调（依据 R25）
 MAX_ALERTS=3        # SKILL.md 正文 ⚠️ + ⛔ 个数上限
+FRONTMATTER_CHARS=500
+TOTAL_CHARS=5200
 
 CDPATH= cd -- "$(dirname -- "$0")/.." || { echo "[红] 进不了仓根目录"; echo "红"; exit 1; }
 
@@ -14,10 +17,10 @@ if ! command -v python3 >/dev/null 2>&1; then
   exit 1
 fi
 
-PYTHONIOENCODING=utf-8 python3 - "$BUDGET_CHARS" "$MAX_ALERTS" <<'PY'
-import os, re, sys
+PYTHONIOENCODING=utf-8 python3 - "$BUDGET_CHARS" "$MAX_ALERTS" "$FRONTMATTER_CHARS" "$TOTAL_CHARS" <<'PY'
+import json, os, re, sys
 
-budget, max_alerts = int(sys.argv[1]), int(sys.argv[2])
+budget, max_alerts, front_budget, total_budget = map(int, sys.argv[1:])
 red = False
 
 def report(ok, msg):
@@ -33,7 +36,7 @@ try:
     # 碰到别的行还没见到结束行 = frontmatter 坏了（防止把正文里的水平线当结束行）
     if not lines or lines[0].rstrip("\r\n") != "---":
         raise ValueError("SKILL.md 开头没有 frontmatter")
-    end = None
+    end, i = None, 0
     for i in range(1, len(lines)):
         s = lines[i].rstrip("\r\n")
         if s == "---":
@@ -44,10 +47,37 @@ try:
     if end is None:
         raise ValueError(f"frontmatter 没有结束行 ---（第 {i + 1} 行不像 YAML）")
     body = "".join(lines[end + 1:])
+    front = "".join(lines[:end + 1])
+    report(len(front) <= front_budget, f"frontmatter 字符 {len(front):,} / 预算 {front_budget:,}")
+    report(len(text) <= total_budget, f"整份字符 {len(text):,} / 预算 {total_budget:,}")
+    # 本仓只用 name 与 JSON 引号单行 description；不引入 YAML 依赖，也不接受隐藏规则的扩展字段。
+    metadata = {}
+    for line in lines[1:end]:
+        m = re.fullmatch(r"(name|description): ([^\r\n]+)[\r\n]*", line)
+        if not m or m.group(1) in metadata:
+            raise ValueError("frontmatter 仅允许不重复的 name 和单行 description，禁止续行或其他字段")
+        metadata[m.group(1)] = m.group(2)
+    if metadata.get("name") != "spec-flow":
+        raise ValueError("frontmatter name 必须为 spec-flow")
+    try:
+        description = json.loads(metadata.get("description", ""))
+    except (ValueError, TypeError):
+        raise ValueError("frontmatter description 必须为双引号单行字符串")
+    if not isinstance(description, str) or not description.strip() or "\n" in description or "\r" in description:
+        raise ValueError("frontmatter description 必须为非空单行触发摘要")
+    report(True, "frontmatter 仅含 name 与单行 description；摘要是否藏规则仍须语义对照")
 
     n = len(body)
     report(n <= budget, f"正文字数 {n:,} / 预算 {budget:,}" + ("" if n <= budget else
            " —— 新增的案例 / 统计 / 来龙去脉进 references/rationale.md，规则旁只留一句理由；依据见 rationale R10"))
+
+    # 同规格测量口径：文首换行单列，其余分节加总必须等于正文。
+    headings = list(re.finditer(r"(?m)^#{1,2} .+$", body))
+    ledger = [("文首换行", len(body[:headings[0].start()]))] if headings else [("正文", len(body))]
+    for i, h in enumerate(headings):
+        stop = headings[i + 1].start() if i + 1 < len(headings) else len(body)
+        ledger.append((h.group().lstrip("# "), stop - h.start()))
+    report(sum(size for _, size in ledger) == n, "分节字符：" + "；".join(f"{name}={size}" for name, size in ledger))
 
     alerts = body.count("⚠") + body.count("⛔")
     report(alerts <= max_alerts, f"正文警示符（⚠️ + ⛔）{alerts} / 上限 {max_alerts}")
@@ -179,11 +209,32 @@ try:
     MEMO_FIELDS = [("默认",), ("本次按需读取",), ("项目级采用", "项目级持久采用"),
                    ("项目入口",), ("项目资产",), ("执行时点",), ("验收",)]
     problems, rows_to_mod, memo_rows, listed = [], {}, {}, set()
-    for line in unfenced(body):
+    src = unfenced(body)
+    headers = [i for i, l in enumerate(src)
+               if re.fullmatch(r"\|\s*文件\s*\|\s*何时读\s*\|\s*", l)]
+    memo_region, reference_rows = "", []
+    if len(headers) != 1:
+        problems.append(f"参考表表头必须恰有一份（文件 / 何时读），实际 {len(headers)} 份")
+    else:
+        hdr = headers[0]
+        hi = hdr
+        while hi + 1 < len(src) and src[hi + 1].lstrip().startswith("|"):
+            hi += 1
+        up = hdr
+        while up - 1 >= 0 and not src[up - 1].strip():
+            up -= 1
+        while up - 1 >= 0 and src[up - 1].strip():
+            up -= 1
+        memo_region = "\n".join(src[up:hi + 1])
+        reference_rows = src[hdr + 1:hi + 1]
+    # 登记只取参考表本身；把选修行搬到其他表不能继续算作登记。
+    for line in reference_rows:
         m = ROW_RE.match(line)
         if not m:
             continue
         path, rest = m.group(1), m.group(2)
+        if path in listed:
+            problems.append(f"{path} 在参考表重复登记")
         listed.add(path)
         if "选修" not in rest:
             continue
@@ -197,40 +248,7 @@ try:
         elif not any(k in rest for k in NOADOPT):
             problems.append(f"{path}：既没有「采用走 `<modifier>`」／「选修 `<modifier>`」也没写「仅本次按需」")
 
-    # 「默认关闭」与读取条件：R24 起由表上方一句共通说明统一承载（不再逐行复述）。
-    # 校验改为**区域级**——目的是「防漏写」，区域里没有才判红；逐行也认，兼容旧形态。
-    # 区域边界 = 参考表整块（表头行 → 表内最后一行 | 行），外加紧贴其上的那一段说明。
-    # 不收窄成整份正文——否则护栏退化成「这两串在正文某处出现过」，参考表附近一个字没有也照样绿。
-    src = unfenced(body)
-    # 定位参考表**自己**的表头（含「文件」与「何时读」两格），不是全文第一个 | 行——
-    # 后者会把卡片总表一起圈进来，区域宽到形同虚设。
-    hdr = next((i for i, l in enumerate(src)
-                if l.lstrip().startswith("|") and "文件" in l and "何时读" in l), None)
-    if hdr is None:
-        memo_region = ""
-    else:
-        hi = hdr
-        while hi + 1 < len(src) and src[hi + 1].lstrip().startswith("|"):
-            hi += 1
-        # 说明段可能紧贴在表头上方（R24 形态），与表头之间常隔一个空行：
-        # 先跳过空行，再吃掉那段连续的说明。
-        up = hdr
-        while up - 1 >= 0 and not src[up - 1].strip():
-            up -= 1
-        while up - 1 >= 0 and src[up - 1].strip():
-            up -= 1
-        memo_region = "\n".join(src[max(up, 0):hi + 1])
-    # 绑定条件是「§十 有登记表」而非「参考表里有选修行」——否则三行全被搬走时
-    # memo_rows 为空，区域校验整段跳过，恰好放过最该拦的那种改法。
-    if memo_rows or reg_mods:
-        if "默认关闭" not in memo_region:
-            problems.append("参考表区域（表头 + 紧贴上方的说明段）缺「默认关闭」——选修备忘录必须显式声明默认关闭")
-        if "声明已采用" not in memo_region and not any(k in memo_region for k in NOADOPT):
-            problems.append("参考表区域（表头 + 紧贴上方的说明段）缺读取条件——须写明「项目已声明采用」或「仅本次按需」")
-        # 反向：区域里的说明句点名「表内标「选修」的行」，就得真有这样的行。
-        # 少了这条，把三行整块搬出参考表而把说明留下 → 全绿（说明还在，行没了）。
-        if not any("选修" in r for r in memo_region.splitlines() if r.lstrip().startswith("|")):
-            problems.append("参考表区域剩下共通说明、却没有任何「选修 `x`」行——三行被搬走了？")
+    # 区域读取条件在 §十 登记解析后核对；即使选修行全部丢失，也不能跳过或引用未定义变量。
 
     # 「未登记 = 未生效」：references/ 下每个 .md 都要在参考表里有行；带「采用口径」的必须是选修行
     try:
@@ -293,11 +311,21 @@ try:
         if in_table:
             table_done = True
         in_table = False
+    if memo_rows or reg_mods:
+        if "默认关闭" not in memo_region:
+            problems.append("参考表区域缺「默认关闭」——不能用全文其他位置代替")
+        if "声明已采用" not in memo_region and not any(k in memo_region for k in NOADOPT):
+            problems.append("参考表区域缺读取条件——须写项目规则声明已采用或仅本次按需")
+        if not memo_rows:
+            problems.append("参考表区域没有任何选修行——选修行被删除或移出参考表")
     for mod, got in sorted(reg_mods.items()):
         miss = FIELDS - set(got)
         if miss:
             problems.append(f"修饰词 `{mod}` 登记表缺字段：{'、'.join(sorted(miss))}")
-        elif got.get("修饰词") != f"`{mod}`":
+        empty = sorted(f for f in FIELDS & set(got) if not got[f])
+        if empty:
+            problems.append(f"修饰词 `{mod}` 登记表字段为空：{'、'.join(empty)}")
+        if not miss and got.get("修饰词") != f"`{mod}`":
             problems.append(f"修饰词 `{mod}` 的登记表里「修饰词」行写的是「{got.get('修饰词', '')}」——表体与标题对不上")
     for mod in sorted(set(rows_to_mod) - set(reg_mods)):
         problems.append(f"`{mod}` 在 SKILL.md 登记、§十 没有登记表")
@@ -310,7 +338,12 @@ try:
         nxt = block.find("\n## ", 3)
         if nxt != -1:
             block = block[:nxt]
-        miss = ["/".join(f) for f in MEMO_FIELDS if not any(k in block for k in f)]
+        # 只认采用口径的字段行，别让别的字段内容里出现「默认」补掉缺失字段。
+        field_names = re.findall(r"(?m)^- ([^：:\r\n]+)[：:][ \t]*\S[^\r\n]*$", block)
+        miss = ["/".join(f) for f in MEMO_FIELDS if not any(k in field_names for k in f)]
+        duplicates = sorted({f for f in field_names if field_names.count(f) > 1})
+        if duplicates:
+            problems.append(f"{rel} 采用口径字段重复：{'、'.join(duplicates)}")
         if miss:
             problems.append(f"{rel} 采用口径缺：{'、'.join(miss)}")
         rest = memo_rows.get(rel)
@@ -321,7 +354,9 @@ try:
     report(not problems, f"采用契约：{len(memo_rows)} 个选修备忘录 / {len(reg_mods)} 张登记表" +
            ("，两侧一一对应、字段齐全" if not problems else "：" + "；".join(problems)))
 
-except Exception as e:  # 跑崩也算红，原因写出来
+except (ValueError, OSError) as e:
+    report(False, f"文档格式或读取错误：{e}")
+except Exception as e:  # 未预期的运行故障仍算红，不冒充具体规则校验成功
     report(False, f"检查跑崩了：{e!r}")
 
 print("红" if red else "绿")

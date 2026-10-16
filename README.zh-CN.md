@@ -2,11 +2,11 @@
 
 **给 AI 编码 agent 用的一套流程规矩。** 把它 clone 进你的 agent 的技能目录；此后你交办一件值得先设计的活时，agent 会先跟你把「要做什么」谈定，**再**动代码——而它产出的每一份东西都要过一道闸，**由你**决定给它多少审核。
 
-它不跑任何东西：没有 CLI、没有服务、没有依赖、不用注册账号。它只是 agent 会读的 markdown，加上这些规矩留下的纸面痕迹——代码之前有 spec，动手之前有 issue，两者之间有一条永久链接。
+流程本身没有运行时或服务。它是 agent 读的 Markdown，加上纸面痕迹：代码前有 spec、动手前有 issue、两者有永久链接。适用的代码地图使用单独安装的工具；配置项目不等于允许安装工具或添加 Hook。
 
-正文被压在**约 5,000 字符**（约 4,300 token）以内，这是故意的：Claude Code 压缩一场长会话之后，只重新挂载一个技能的前 5,000 token——正文再长，它就会开始悄悄丢掉自己尾巴上的规矩。[`scripts/check-docs.sh`](scripts/check-docs.sh) 会在超标时把检查判红。
+本次正文预算为 **4,700 字符**、frontmatter **500**、整份 **5,200**，均含换行。[`scripts/check-docs.sh`](scripts/check-docs.sh) 同时核三笔账，并拦额外元信息和多行 description。字符预算不是跨客户端的 token 或压缩保留保证；动作细则使用当刻必须读，压缩丢失后重新读。
 
-**这里的每条规矩都是从一个真实项目上出过的事里长出来的。** 完整档案在 [`references/rationale.md`](references/rationale.md)——**24 条，带日期、数字，以及事后改了什么。**
+**每条规矩都有可回溯来源。** [`references/rationale.md`](references/rationale.md) 有 **25 条记录**，包括日期、实测、决定、代价和验证边界。
 
 [English](README.md) · **中文**
 
@@ -39,7 +39,7 @@
 <!-- s:scars -->
 ## 这些规矩是从哪来的
 
-不是从理论来的。每条规矩都是一次具体事故的沉淀，日期和数字都记在 [`references/rationale.md`](references/rationale.md) 里。24 条里的五条：
+不是从理论来的。每条规矩都是一次具体事故的沉淀，日期和数字都记在 [`references/rationale.md`](references/rationale.md) 里。其中五个案例：
 
 - **一条判据放宽了，别处一个没动。** IDC 判据从「CIDR 段」扩成「CIDR ∪ ASN」，只改了那一句——机制、实现、实施步骤、验收四处还都在描述旧行为，父文档总纲也没改。照那份 spec 施工，做出来是 CIDR-only。独立审核抓出 2 处严重。→ **R1**：改一条判据，它的每个落点都要同步。
 - **两个 agent 认领了同一个 issue。** 两边都把 *open* 读成「没人在做」，同一件事做了两遍，废掉一份。→ **R7**：认领的证据是 worktree 建成了，不是 issue 的状态。
@@ -111,7 +111,7 @@ agent 派出去的一切都还是它自己——同一件事、同一段 prompt�
 git clone https://github.com/Strelizialeomon/spec-flow.git ~/.claude/skills/spec-flow
 ```
 
-装完就是全部——Claude Code 从 `~/.claude/skills/<名字>/SKILL.md` 读个人 skill。升级就是在那个目录里 `git pull`。
+这是技能安装，不是项目接入或工具配置。Claude Code 从 `~/.claude/skills/<名字>/SKILL.md` 读个人 skill；在该检出里 `git pull` 更新。其他客户端使用各自的技能发现路径。
 
 习惯把仓放在别处（作者就是这样），就 clone 到别处再软链进来：
 
@@ -120,7 +120,7 @@ git clone https://github.com/Strelizialeomon/spec-flow.git ~/code/spec-flow
 ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 ```
 
-要求：一个能读 skills 目录、能跑 shell 命令（`git worktree`）、能开 PR（`gh`）的 agent。已在 Claude Code 上验证；正文是纯 markdown，任何有 skills 目录的 harness 都能读。
+要求：一个能发现 skills、跑 shell（`git worktree`）、开 PR（`gh`）的 agent。正文是 Markdown，但发现链、权限和压缩行为仍需真实客户端验证；文档检查绿不证明客户端读到或遵守了规则。
 
 <!-- s:usage -->
 ## 怎么用
@@ -129,14 +129,18 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 
 也可以从中间进：说「做 #12」就从段二开始，同样要过闸才能合。
 
-想把它用到自己的仓里，说「把 spec-flow 应用到本项目」。它往那个仓的 `AGENTS.md` 里写一段指针（只有在那个仓已有 `CLAUDE.md` 时，才往 `CLAUDE.md` 补一行 `@AGENTS.md` 导入）——指向这里，而不是抄一份正文，所以规矩永远只有一份。
+首次接入说 **「把 spec-flow 应用到本项目」**：写入 `AGENTS.md` 指针，仅在已有 `CLAUDE.md` 时补 `@AGENTS.md`，不抄正文。**「更新本项目的 spec-flow 接入」** 显式校验和升级旧入口，包括已采用的 ADR 动作与旧文档读序；重复执行幂等、不自动启用未采用选修，普通任务不顺手改制度。
+
+**「为本项目配置代码地图」「启用 code-map」** 共用上述检查。按语义识别变体，真正未知描述问清。地图保留工具、已验版本、四类真实命令和版控范围；持久授权写清来源、精确路径、触发与工作区作用域。机器安装单独同意，setup、Hook、MCP、daemon、脚本走可执行资产升级闸；缺权限或覆盖就如实回落源码，不伪报地图通过。
+
+已采用 ADR 的项目在调查、旧 issue 或免方案期首次实施前检索，明确长期拍板后按条件记录，收尾核本次处理。实施前必须读当前获批施工 spec；只有历史规格在追溯时按需读。这些嵌在已有动作，不增加步骤或三道固定 ADR 闸。
 
 <!-- s:evidence -->
 ## 本仓自己就是样板
 
 spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个已合并 PR、17 个 issue、16 份 spec（`docs/specs/`）。每份 spec 是一次改动的设计记录；过了审核的那些 PR，讨论里留着发现——包括后来改掉了规矩的发现。
 
-规矩按 `R` 编号被引用，形如 `（依据：rationale R12）`，每一条都指进 [`references/rationale.md`](references/rationale.md)。**那个文件就是这个项目值得一读的理由**——24 次事故的完整记录都在里面：IDC 那条判据在一处放宽而另外四处连同父文档都没改；那条让「没有 bug」不再等于「我们保证以后永不出错」的完成标准；以及两个项目的对照——一个把架构决策记录用起来了，一个没有。
+规矩按 `R` 编号被引用，形如 `（依据：rationale R12）`，每一条都指进 [`references/rationale.md`](references/rationale.md)。**那个文件记录完整案例与边界**：IDC 那条判据在一处放宽而另外四处连同父文档都没改；那条让「没有 bug」不再等于「我们保证以后永不出错」的完成标准；以及两个已采用项目怎样消费与记录架构决定的对照及其证据边界。
 
 <!-- s:docs -->
 ## 文件
@@ -146,20 +150,20 @@ spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R24） |
+| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R25） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
-| `references/code-map.md` | 代码地图怎么用：安装、版本基线、覆盖率状态、不可用时怎么办 |
+| `references/code-map.md` | 地图就绪、持久权限、版控范围、多工作区、目标 / diff 覆盖与回落 |
 | `references/done-criteria.md` | 完成标准、观察式收尾、三类例外 |
 | `references/split-large-spec.md` | 拆大 spec：交付物地图、依赖台账 |
 | `references/adr-decision-records.md` | 可选：架构决策记录（ADR） |
 | `references/documentation-lifecycle.md` | 可选：spec / ADR / issue 分工 |
 | `references/issue-status-labels.md` | 可选：issue 状态标签 |
-| `references/apply-to-project.md` | 「应用到项目」用的指针块模板 |
-| `references/adoption-model.md` | 可选：「应用到项目」背后的三层采纳模型 |
+| `references/apply-to-project.md` | 应用、显式升级、地图配置的共用检查；指针模板与资产边界 |
+| `references/adoption-model.md` | 采纳模型的历史解释，不增加流程义务 |
 | `docs/maintainer-notes.md` | 本仓自己的说明：这份检出怎么接的线、最早的提交为什么是重建的 |
-| `scripts/check-docs.sh` | 文档检查：SKILL.md 体量、references 路径、README 双语同步、采用契约 |
+| `scripts/check-docs.sh` | 正文 / frontmatter / 整份预算、路径、双语同步、参考表区域采用护栏 |
 
 流程正文是 `SKILL.md`——这份 README 与它说法不一致时，以 `SKILL.md` 为准。哪个参考什么时候读，见 `SKILL.md` 末尾那张表。
 

@@ -2,11 +2,11 @@
 
 **A set of process rules for AI coding agents.** You clone it into your agent's skills directory. From then on, when you ask for work worth designing, the agent agrees with you on what it is building *before* it writes code — and everything it produces has to pass a gate where **you** decide how much review it gets.
 
-Nothing runs. No CLI, no service, no dependency, no account. It is markdown the agent reads, plus the paper trail those rules produce: a spec before the code, an issue before the work, a permanent link between the two.
+The workflow has no runtime or service. It is markdown the agent reads, plus a paper trail: a spec before code, an issue before work, and a permanent link between them. An applicable code map uses a separately installed tool; project configuration does not authorize installing it or adding hooks.
 
-The body is held to about 5,000 characters — roughly 4,300 tokens — on purpose. When Claude Code compacts a long conversation, it re-attaches only the first 5,000 tokens of a skill, so a longer body would quietly start losing its own tail. [`scripts/check-docs.sh`](scripts/check-docs.sh) fails the check if it grows past the budget.
+This revision limits the body to **4,700 characters**, frontmatter to **500**, and the whole skill to **5,200**, including newlines. [`scripts/check-docs.sh`](scripts/check-docs.sh) checks all three and rejects extra metadata fields or multiline descriptions. These are character budgets, not a cross-client token or compaction guarantee. Action-specific details are mandatory when needed; after compaction hides them, the agent reads them again.
 
-Every rule in it came out of something that went wrong on a real job. The full dossier is [`references/rationale.md`](references/rationale.md) — 24 entries with dates, numbers, and what changed as a result.
+Every rule has a recorded origin. The dossier is [`references/rationale.md`](references/rationale.md): 25 entries with dates, measurements, decisions, costs and verification limits.
 
 **English** · [中文](README.zh-CN.md)
 
@@ -39,7 +39,7 @@ None of these are model failures, and none are fixed by trying harder inside a s
 <!-- s:scars -->
 ## Where the rules came from
 
-Not from theory. Each rule is the residue of a specific failure, recorded with its date and numbers in [`references/rationale.md`](references/rationale.md). Five of the 24:
+Not from theory. Each rule is the residue of a specific failure, recorded with its date and numbers in [`references/rationale.md`](references/rationale.md). Five of the recorded cases:
 
 - **A criterion was widened and nothing else moved.** An IDC rule went from "CIDR ranges" to "CIDR ∪ ASN". Only that sentence changed — while the mechanism, the implementation, the steps and the acceptance criteria all still described the old behaviour, as did the parent document's overview. Building from that spec would have shipped CIDR-only. An independent review caught two severe findings. → **R1**: change a criterion, sync every place it lands.
 - **Two agents claimed the same issue.** Both read *open* as "nobody is working on this" and both did the work. One was wasted. → **R7**: the claim is the worktree being created, not the issue's state.
@@ -111,7 +111,7 @@ Tools that keep this in their own private index drift without telling you. This 
 git clone https://github.com/Strelizialeomon/spec-flow.git ~/.claude/skills/spec-flow
 ```
 
-That's the whole install — Claude Code loads personal skills from `~/.claude/skills/<name>/SKILL.md`. Updating is `git pull` inside that directory.
+That's the skill installation, not project adoption or tool setup. Claude Code loads personal skills from `~/.claude/skills/<name>/SKILL.md`; update that checkout with `git pull`. Other clients use their own skill discovery paths.
 
 If you keep your repos elsewhere (as the author does), clone anywhere and symlink it in:
 
@@ -120,7 +120,7 @@ git clone https://github.com/Strelizialeomon/spec-flow.git ~/code/spec-flow
 ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 ```
 
-Requirements: an agent that can read a skills directory, run shell commands (`git worktree`), and open PRs (`gh`). Verified with Claude Code; the content is plain markdown, so any harness with a skills directory can read it.
+Requirements: an agent that discovers skills, runs shell commands (`git worktree`), and opens PRs (`gh`). The rules are markdown; discovery, permissions and compaction behaviour still require real client tests. A passing document check does not prove that a client loaded or followed them.
 
 <!-- s:usage -->
 ## Using it
@@ -129,14 +129,18 @@ Trigger it by describing work that deserves designing — "this touches the API,
 
 You can also enter from the middle: "do #12" starts phase 2 for an existing issue, and still passes the gate before merging.
 
-To adopt it in one of your own repos, say *"apply spec-flow to this project"*. It writes a pointer block into that repo's `AGENTS.md` — adding the one-line `@AGENTS.md` import to `CLAUDE.md`, and only when that file already exists — pointing here rather than copying the rules, so there is only ever one copy to maintain.
+To adopt it, say **"apply spec-flow to this project"**. It writes a pointer in `AGENTS.md`, adding `@AGENTS.md` to `CLAUDE.md` only if that file exists. **"Update this project's spec-flow integration"** explicitly checks and upgrades an old entry, including already adopted ADR actions and document reading order; repeat runs are idempotent and do not enable unadopted options. Ordinary work does not repair project rules as a side effect.
+
+**"Configure a code map for this project"** or **"enable code-map"** reaches the same adoption checks. Natural-language equivalents work; unknown additions are clarified. The map records the tool, verified version, four real query commands and a version-controlled scope. Persistent permission records the source, exact writable paths, triggers and worktree scope. Tool installation needs separate consent; setup, hooks, MCP, daemons and scripts need the executable-asset gate. Missing permission or coverage means an honest source-search fallback, not a passing map check.
+
+Already adopted ADR rules apply during discovery, before old-issue or design-exempt implementation, on explicit long-term decisions, and when checking this task's outcome. The current approved spec must be read before implementation; only historical specs are optional tracing material. These are existing action points, not new steps or three fixed ADR gates.
 
 <!-- s:evidence -->
 ## This repo is its own case study
 
 spec-flow is developed with spec-flow. As of 2026-10-16: 66 merged PRs, 17 issues, 16 specs in `docs/specs/`. Each spec is the design record of one change; the PRs that went through a review hold its findings in the discussion, including the findings that changed a rule.
 
-The rules are cited by `R` number, like `（依据：rationale R12）`, and every one of those points into [`references/rationale.md`](references/rationale.md). That file is the reason to read this repo: it is where the 24 incidents live in full — the IDC criterion widened in one place while four others and the parent document stayed stale, the completion contract that stops "no bugs" from meaning "we promise nothing will ever break", and a controlled comparison of two projects where one adopted architecture decision records and one didn't.
+The rules are cited by `R` number, like `（依据：rationale R12）`, and every one of those points into [`references/rationale.md`](references/rationale.md). That file records the cases in full: the IDC criterion widened in one place while four others and the parent document stayed stale, the completion contract that stops "no bugs" from meaning "we promise nothing will ever break", and a controlled comparison of how two projects consumed and recorded adopted architecture decisions, with the limits of that evidence.
 
 <!-- s:docs -->
 ## Files
@@ -146,20 +150,20 @@ The rules are cited by `R` number, like `（依据：rationale R12）`, and ever
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R24) |
+| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R25) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
-| `references/code-map.md` | Using a code map: install, version baseline, coverage states, when it's unavailable |
+| `references/code-map.md` | Map readiness, persistent permission, versioned scope, worktrees, target / diff coverage and fallback |
 | `references/done-criteria.md` | Done criteria, observational close-outs, the three exception types |
 | `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
 | `references/adr-decision-records.md` | Optional: architecture decision records |
 | `references/documentation-lifecycle.md` | Optional: spec / ADR / issue division of labour |
 | `references/issue-status-labels.md` | Optional: issue status labels |
-| `references/apply-to-project.md` | The pointer-block templates behind "apply to this project" |
-| `references/adoption-model.md` | Optional: the three-layer adoption model behind "apply to this project" |
+| `references/apply-to-project.md` | Shared checks for applying, explicitly upgrading and configuring a map; pointer templates and asset boundaries |
+| `references/adoption-model.md` | Historical explanation of the adoption model; no additional workflow obligations |
 | `docs/maintainer-notes.md` | Repo-local notes: how this checkout is wired, why the first commits are reconstructed |
-| `scripts/check-docs.sh` | Document checks: SKILL.md budget, reference paths, README sync, adoption contract |
+| `scripts/check-docs.sh` | Body / frontmatter / whole-skill budgets, reference paths, README sync, region-bound adoption contract |
 
 The workflow itself is `SKILL.md`; where this README and that file disagree, `SKILL.md` wins. Which reference to read when is listed at the bottom of `SKILL.md`.
 
