@@ -6,7 +6,7 @@
 
 正文被压在**约 5,000 字符**（约 4,300 token）以内，这是故意的：Claude Code 压缩一场长会话之后，只重新挂载一个技能的前 5,000 token——正文再长，它就会开始悄悄丢掉自己尾巴上的规矩。[`scripts/check-docs.sh`](scripts/check-docs.sh) 会在超标时把检查判红。
 
-**这里的每条规矩都是从一个真实项目上出过的事里长出来的。** 完整档案在 [`references/rationale.md`](references/rationale.md)——**23 条，带日期、数字，以及事后改了什么。**
+**这里的每条规矩都是从一个真实项目上出过的事里长出来的。** 完整档案在 [`references/rationale.md`](references/rationale.md)——**24 条，带日期、数字，以及事后改了什么。**
 
 [English](README.md) · **中文**
 
@@ -39,7 +39,7 @@
 <!-- s:scars -->
 ## 这些规矩是从哪来的
 
-不是从理论来的。每条规矩都是一次具体事故的沉淀，日期和数字都记在 [`references/rationale.md`](references/rationale.md) 里。23 条里的五条：
+不是从理论来的。每条规矩都是一次具体事故的沉淀，日期和数字都记在 [`references/rationale.md`](references/rationale.md) 里。24 条里的五条：
 
 - **一条判据放宽了，别处一个没动。** IDC 判据从「CIDR 段」扩成「CIDR ∪ ASN」，只改了那一句——机制、实现、实施步骤、验收四处还都在描述旧行为，父文档总纲也没改。照那份 spec 施工，做出来是 CIDR-only。独立审核抓出 2 处严重。→ **R1**：改一条判据，它的每个落点都要同步。
 - **两个 agent 认领了同一个 issue。** 两边都把 *open* 读成「没人在做」，同一件事做了两遍，废掉一份。→ **R7**：认领的证据是 worktree 建成了，不是 issue 的状态。
@@ -136,7 +136,7 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 
 spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个已合并 PR、17 个 issue、16 份 spec（`docs/specs/`）。每份 spec 是一次改动的设计记录；过了审核的那些 PR，讨论里留着发现——包括后来改掉了规矩的发现。
 
-规矩按 `R` 编号被引用，形如 `（依据：rationale R12）`，每一条都指进 [`references/rationale.md`](references/rationale.md)。**那个文件就是这个项目值得一读的理由**——23 次事故的完整记录都在里面：IDC 那条判据在一处放宽而另外四处连同父文档都没改；那条让「没有 bug」不再等于「我们保证以后永不出错」的完成标准；以及两个项目的对照——一个把架构决策记录用起来了，一个没有。
+规矩按 `R` 编号被引用，形如 `（依据：rationale R12）`，每一条都指进 [`references/rationale.md`](references/rationale.md)。**那个文件就是这个项目值得一读的理由**——24 次事故的完整记录都在里面：IDC 那条判据在一处放宽而另外四处连同父文档都没改；那条让「没有 bug」不再等于「我们保证以后永不出错」的完成标准；以及两个项目的对照——一个把架构决策记录用起来了，一个没有。
 
 <!-- s:docs -->
 ## 文件
@@ -146,10 +146,11 @@ spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R23） |
+| `references/rationale.md` | 每条规矩的依据：案例、统计、调研（R1–R24） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
+| `references/code-map.md` | 代码地图怎么用：安装、版本基线、覆盖率状态、不可用时怎么办 |
 | `references/done-criteria.md` | 完成标准、观察式收尾、三类例外 |
 | `references/split-large-spec.md` | 拆大 spec：交付物地图、依赖台账 |
 | `references/adr-decision-records.md` | 可选：架构决策记录（ADR） |
