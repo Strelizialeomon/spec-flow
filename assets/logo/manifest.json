@@ -1,0 +1,44 @@
+{
+  "name": "spec-flow",
+  "selected_variant": "C",
+  "source": {
+    "path": "source/c-original.png",
+    "sha256": "a98678734589f1a9e82b52272cfeb641d375c5f442bdddbb5dd6bcc34d09093c",
+    "width": 1254,
+    "height": 1254,
+    "generation_model": "gpt-image-2",
+    "generation_task_id": "14-c4026aec-401f-4d81-b235-aa71f3e7bdb9"
+  },
+  "appearance": {
+    "fill": "#000000",
+    "background": "transparent",
+    "added_elements": [],
+    "dark_mode_variant": {
+      "fill": "#FFFFFF",
+      "derived_from": "spec-flow.svg"
+    }
+  },
+  "vectorization": {
+    "engine": "VTracer 0.6.12",
+    "mode": "polygon",
+    "binarization_threshold": 128,
+    "simplification_tolerance_px": 0.75,
+    "svg_view_box": [
+      119,
+      400,
+      1016,
+      436
+    ],
+    "source_silhouette_overlap": 0.9924909416749945,
+    "maximum_source_edge_distance_px": 2.23606797749979
+  },
+  "exports": {
+    "svg": "spec-flow.svg",
+    "svg_dark": "spec-flow-white.svg",
+    "png": {
+      "path": "spec-flow.png",
+      "width": 2048,
+      "height": 879
+    }
+  }
+}
