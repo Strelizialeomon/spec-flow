@@ -199,12 +199,38 @@ try:
 
     # 「默认关闭」与读取条件：R24 起由表上方一句共通说明统一承载（不再逐行复述）。
     # 校验改为**区域级**——目的是「防漏写」，区域里没有才判红；逐行也认，兼容旧形态。
-    memo_region = "\n".join(unfenced(body))
-    if memo_rows:
+    # 区域边界 = 参考表整块（表头行 → 表内最后一行 | 行），外加紧贴其上的那一段说明。
+    # 不收窄成整份正文——否则护栏退化成「这两串在正文某处出现过」，参考表附近一个字没有也照样绿。
+    src = unfenced(body)
+    # 定位参考表**自己**的表头（含「文件」与「何时读」两格），不是全文第一个 | 行——
+    # 后者会把卡片总表一起圈进来，区域宽到形同虚设。
+    hdr = next((i for i, l in enumerate(src)
+                if l.lstrip().startswith("|") and "文件" in l and "何时读" in l), None)
+    if hdr is None:
+        memo_region = ""
+    else:
+        hi = hdr
+        while hi + 1 < len(src) and src[hi + 1].lstrip().startswith("|"):
+            hi += 1
+        # 说明段可能紧贴在表头上方（R24 形态），与表头之间常隔一个空行：
+        # 先跳过空行，再吃掉那段连续的说明。
+        up = hdr
+        while up - 1 >= 0 and not src[up - 1].strip():
+            up -= 1
+        while up - 1 >= 0 and src[up - 1].strip():
+            up -= 1
+        memo_region = "\n".join(src[max(up, 0):hi + 1])
+    # 绑定条件是「§十 有登记表」而非「参考表里有选修行」——否则三行全被搬走时
+    # memo_rows 为空，区域校验整段跳过，恰好放过最该拦的那种改法。
+    if memo_rows or reg_mods:
         if "默认关闭" not in memo_region:
-            problems.append("参考表区域缺「默认关闭」——选修备忘录必须显式声明默认关闭")
+            problems.append("参考表区域（表头 + 紧贴上方的说明段）缺「默认关闭」——选修备忘录必须显式声明默认关闭")
         if "声明已采用" not in memo_region and not any(k in memo_region for k in NOADOPT):
-            problems.append("参考表区域缺读取条件——须写明「项目已声明采用」或「仅本次按需」")
+            problems.append("参考表区域（表头 + 紧贴上方的说明段）缺读取条件——须写明「项目已声明采用」或「仅本次按需」")
+        # 反向：区域里的说明句点名「表内标「选修」的行」，就得真有这样的行。
+        # 少了这条，把三行整块搬出参考表而把说明留下 → 全绿（说明还在，行没了）。
+        if not any("选修" in r for r in memo_region.splitlines() if r.lstrip().startswith("|")):
+            problems.append("参考表区域剩下共通说明、却没有任何「选修 `x`」行——三行被搬走了？")
 
     # 「未登记 = 未生效」：references/ 下每个 .md 都要在参考表里有行；带「采用口径」的必须是选修行
     try:
