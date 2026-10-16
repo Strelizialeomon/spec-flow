@@ -1,36 +1,80 @@
 # spec-flow
 
-A two-phase workflow for AI coding agents: settle the spec before any code gets written, and let the human — not the agent — decide how much review each deliverable gets.
+**A process for AI coding agents that moves every rework to its cheapest moment.** Agree on the spec before any code exists, run it through two phases and one shared gate, and let a human — not the agent — decide how much review each deliverable gets.
 
 **English** · [中文](README.zh-CN.md)
 
 > The workflow itself is written in Chinese (`SKILL.md` and `references/`). This README is the English entry point, so you can tell whether it's for you before opening anything.
+
+The rules here grew out of things that actually happened. [`references/rationale.md`](references/rationale.md) keeps the dossier — 22 entries, each with the case, the number or the investigation behind it.
 
 <!-- s:problem -->
 ## The problem
 
 Agents are good at producing work and bad at stopping to align first. Left alone they will:
 
-- start coding from a half-formed request, and you only meet the misunderstanding in the diff;
-- finish a large chunk in one go, so one wrong turn costs the whole chunk;
-- report "an independent reviewer checked this" when the reviewer was a subagent they spawned, prompted, and framed themselves.
+- **start coding from a half-formed request** — and you only meet the misunderstanding in the diff, by which point everything downstream has been built on top of it;
+- **finish a large chunk in one go** — so there is no checkpoint where the wrong assumption could have been caught, and one wrong turn costs the whole chunk;
+- **report "an independent reviewer checked this"** when the reviewer was a subagent they spawned, prompted, and framed themselves — chosen by the party that wants the green light. You think a second pair of eyes looked at it. None did.
 
 <!-- s:what -->
-## What it does
+## How it solves them
 
-spec-flow is not a code generator. It's a set of process rules — one markdown file plus references — that the agent loads before doing work worth designing. Two phases, one shared gate:
+**Two phases, one shared gate.**
 
-- **Phase 1 · design** — describe the need → agree on it → the agent writes a spec → the spec goes through a PR and the gate → merge → the spec gets its own issue. No code yet.
+- **Phase 1 · design** — describe the need → agree on it → spec → PR → gate → merge → the spec gets its own issue. No code yet.
 - **Phase 2 · implementation** — claim the issue (the git worktree *is* the lock) → implement → gate → merge → backfill the issue and release the lock.
 
-At the gate, the agent lays out the review levels (none / light / heavy / heavy + mutation testing) and **you** pick one. It never picks for you — an unanswered review card falls back to *no review*, and for the cards that govern a merge or the fate of a known problem, no answer means no merge.
+At the shared gate the agent lays out the review levels — **none / light / heavy / heavy + mutation testing** — and **you** pick one, fresh for each deliverable. Nothing carries over from the last one.
+
+Each step exists for a failure you can name:
+
+| The step | The failure it stops |
+|---|---|
+| Agreeing on the need is a hard gate — no spec file gets touched until you nod | the misunderstanding you'd otherwise meet in the diff |
+| Every deliverable passes its own gate | one wrong turn costing the whole chunk |
+| The agent may not produce a review verdict on its own behalf | the review that never happened |
+| An issue anchors a permanent link to the merged spec | "why was it built this way" drifting out of reach |
 
 <!-- s:self-review -->
 ## The part worth stealing: a subagent is not a second opinion
 
 Everything the agent spawns is still the agent — same task, same prompt, same framing, chosen by the party who wants the green light. So a subagent's conclusions weigh exactly as much as the agent's own. No more.
 
-spec-flow therefore forbids the agent from producing a review verdict on its own behalf, and forbids it from borrowing authority ("an independent reviewer approved this") when it asks you to sign off. When a step genuinely needs an opinion that isn't the agent's, that step stops and waits for a human.
+spec-flow therefore forbids the agent from producing a review verdict on its own behalf: the review level is yours to pick, and it may not dispatch a reviewer to do the judging for it. When a step genuinely needs an opinion that isn't the agent's, that step stops and waits for a human.
+
+<!-- s:smooth -->
+## Why it doesn't feel heavy
+
+It isn't restraint bolted onto the agent. It's rework moved to where rework is cheap — and every mechanism is shaped to cost you as little attention as possible.
+
+| The design | Why it's smooth |
+|---|---|
+| The review level is chosen per deliverable and never inherited | Cost tracks risk: **none / light / heavy / heavy + mutation testing**. A one-line doc change costs nothing; a core change gets two reviewers. No blanket policy to argue about. |
+| An unanswered card never adds anything | All six cards default away from action: no review, no merge, no new spec, no exception, no edit. |
+| Interruptions are split by whether they need an answer | A new mechanism gets its own card, because that's the thing you'd later ask "what is this, and where did it come from". Everything else the agent decided by itself — defaults, naming, where things land — is listed in one block at the end for you to skim, not answer one by one. |
+| The judgment is taken away from the agent | It may not decide "this one counts as core." That removes the argument, not just the risk. |
+| A rule that came out of an incident cites it by `R` number | Disagree with that rule and the incident is one hop away. You never re-litigate it from scratch. |
+
+<!-- s:longrun -->
+## Why it survives long work
+
+**State lives in git, not in the agent's head.**
+
+| To know | It's written in | Why you can trust it |
+|---|---|---|
+| Who is working on it | the worktree name — the lock itself | Creating `issue-42` succeeds = nobody has it; refused = somebody does. (`git worktree list` shows the same thing at a glance, but the lock is the create succeeding.) No separate assignment board to fall out of sync. |
+| How far along it is | the issue's state and the pull request | Durable, readable across sessions, unchanged when you switch machines or hand it to someone else. |
+| Why it was built that way | the spec in `docs/specs/`, linked from the issue | It passed the gate, it's in prose, and it's versioned with the code — diffable, blamable, revertable. |
+
+Tools that keep this in their own private index drift without telling you. This one can't: git says so, loudly, at the moment it happens.
+
+<!-- s:limits -->
+## What it doesn't do
+
+- **It doesn't remember the process.** What was tried and abandoned, which dead end cost an hour, which step you were mid-way through — if it wasn't written down, it's gone. One part does get written down: the review trail, each finding and how it was disposed of, appended to the spec. So a new session reads *what to do*, *how far along*, and *what was caught last time* — but not *why the road not taken didn't work*.
+- **It isn't a runtime.** Nothing here schedules an agent, checkpoints a run, or resumes one that died at 3am. It assumes you are there for the gate.
+- **It assumes GitHub.** Issues and pull requests are load-bearing, not decoration.
 
 <!-- s:install -->
 ## Install
@@ -48,7 +92,7 @@ git clone https://github.com/Strelizialeomon/spec-flow.git ~/code/spec-flow
 ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 ```
 
-Requirements: an agent that can read a skills directory, run shell commands (`git worktree`), and open PRs (`gh`). Verified with Claude Code; the content is plain markdown, so any harness with a skills directory can read it. The workflow assumes GitHub.
+Requirements: an agent that can read a skills directory, run shell commands (`git worktree`), and open PRs (`gh`). Verified with Claude Code; the content is plain markdown, so any harness with a skills directory can read it.
 
 <!-- s:usage -->
 ## Using it
@@ -62,9 +106,9 @@ To adopt it in one of your own repos, say *"apply spec-flow to this project"*. I
 <!-- s:evidence -->
 ## This repo is its own case study
 
-spec-flow is developed with spec-flow. As of 2026-10-15: 57 merged PRs, 15 issues, 14 specs in `docs/specs/`, running since 2026-09-22 — each spec is the design record of one change, and its PR discussion holds the review findings.
+spec-flow is developed with spec-flow. As of 2026-10-16: 64 merged PRs, 17 issues, 16 specs in `docs/specs/`. Each spec is the design record of one change; the PRs that went through a review hold its findings in the discussion, including the findings that changed a rule.
 
-Clauses carry a pointer like `（依据：rationale R12）` into `references/rationale.md`, where the case, the statistic or the research behind that rule lives. If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
+Clauses carry a pointer like `（依据：rationale R12）` into [`references/rationale.md`](references/rationale.md), where the case, the statistic or the research behind that rule lives — the anti-scraping job where a judgement criterion was widened in one place and left stale in four others plus the parent document's overview, so building from the spec would have produced the old behaviour; the completion contract that stops "no bugs" from meaning "we promise nothing will ever break". If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
 
 <!-- s:docs -->
 ## Files
