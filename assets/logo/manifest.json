@@ -12,19 +12,29 @@
   "appearance": {
     "fill": "#000000",
     "background": "transparent",
-    "added_elements": []
+    "added_elements": [],
+    "dark_mode_variant": {
+      "fill": "#FFFFFF",
+      "derived_from": "spec-flow.svg"
+    }
   },
   "vectorization": {
     "engine": "VTracer 0.6.12",
     "mode": "polygon",
     "binarization_threshold": 128,
     "simplification_tolerance_px": 0.75,
-    "svg_view_box": [119, 400, 1016, 436],
+    "svg_view_box": [
+      119,
+      400,
+      1016,
+      436
+    ],
     "source_silhouette_overlap": 0.9924909416749945,
     "maximum_source_edge_distance_px": 2.23606797749979
   },
   "exports": {
     "svg": "spec-flow.svg",
+    "svg_dark": "spec-flow-white.svg",
     "png": {
       "path": "spec-flow.png",
       "width": 2048,
