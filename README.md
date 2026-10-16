@@ -6,7 +6,7 @@ Nothing runs. No CLI, no service, no dependency, no account. It is markdown the 
 
 The body is held to about 5,000 characters — roughly 4,300 tokens — on purpose. When Claude Code compacts a long conversation, it re-attaches only the first 5,000 tokens of a skill, so a longer body would quietly start losing its own tail. [`scripts/check-docs.sh`](scripts/check-docs.sh) fails the check if it grows past the budget.
 
-Every rule in it came out of something that went wrong on a real job. The full dossier is [`references/rationale.md`](references/rationale.md) — 24 entries with dates, numbers, and what changed as a result.
+Every rule in it came out of something that went wrong on a real job. The full dossier is [`references/rationale.md`](references/rationale.md) — 23 entries with dates, numbers, and what changed as a result.
 
 **English** · [中文](README.zh-CN.md)
 
@@ -39,7 +39,7 @@ None of these are model failures, and none are fixed by trying harder inside a s
 <!-- s:scars -->
 ## Where the rules came from
 
-Not from theory. Each rule is the residue of a specific failure, recorded with its date and numbers in [`references/rationale.md`](references/rationale.md). Five of the 24:
+Not from theory. Each rule is the residue of a specific failure, recorded with its date and numbers in [`references/rationale.md`](references/rationale.md). Five of the 23:
 
 - **A criterion was widened and nothing else moved.** An IDC rule went from "CIDR ranges" to "CIDR ∪ ASN". Only that sentence changed — while the mechanism, the implementation, the steps and the acceptance criteria all still described the old behaviour, as did the parent document's overview. Building from that spec would have shipped CIDR-only. An independent review caught two severe findings. → **R1**: change a criterion, sync every place it lands.
 - **Two agents claimed the same issue.** Both read *open* as "nobody is working on this" and both did the work. One was wasted. → **R7**: the claim is the worktree being created, not the issue's state.
@@ -136,7 +136,7 @@ To adopt it in one of your own repos, say *"apply spec-flow to this project"*. I
 
 spec-flow is developed with spec-flow. As of 2026-10-16: 66 merged PRs, 17 issues, 16 specs in `docs/specs/`. Each spec is the design record of one change; the PRs that went through a review hold its findings in the discussion, including the findings that changed a rule.
 
-The rules are cited by `R` number, like `（依据：rationale R12）`, and every one of those points into [`references/rationale.md`](references/rationale.md). That file is the reason to read this repo: it is where the 24 incidents live in full — the IDC criterion widened in one place while four others and the parent document stayed stale, the completion contract that stops "no bugs" from meaning "we promise nothing will ever break", and a controlled comparison of two projects where one adopted architecture decision records and one didn't.
+The rules are cited by `R` number, like `（依据：rationale R12）`, and every one of those points into [`references/rationale.md`](references/rationale.md). That file is the reason to read this repo: it is where the 23 incidents live in full — the IDC criterion widened in one place while four others and the parent document stayed stale, the completion contract that stops "no bugs" from meaning "we promise nothing will ever break", and a controlled comparison of two projects where one adopted architecture decision records and one didn't.
 
 <!-- s:docs -->
 ## Files
@@ -146,11 +146,10 @@ The rules are cited by `R` number, like `（依据：rationale R12）`, and ever
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R24) |
+| `references/rationale.md` | Why each rule exists: cases, numbers, research (R1–R23) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
-| `references/code-map.md` | Using a code map: install, version baseline, coverage states, when it's unavailable |
 | `references/done-criteria.md` | Done criteria, observational close-outs, the three exception types |
 | `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
 | `references/adr-decision-records.md` | Optional: architecture decision records |
