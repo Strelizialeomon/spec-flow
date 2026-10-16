@@ -1,10 +1,10 @@
 # spec：可执行主流程、显式项目接入与 ADR 唤起
 
 - 日期：2026-10-16
-- 状态：实施中；中央规则候选已落地，整体验收未通过（Claude Code 认证失败、真实压缩恢复及场景缺项尚未补齐）；未合并、未关单
+- 状态：实施中；中央候选已提交 PR #98，文档检查通过；整体验收未通过（Claude Code 认证失败、Codex 调用额度耗尽及场景缺项）；未合并、未关单
 - 决策人：用户
 - Issue：[#96](https://github.com/Strelizialeomon/spec-flow/issues/96)
-- 实施基线：`origin/main@cf0240353616cfabd82e68480dfd13b3639e18b5`；验收证据及缺项见实施 PR（由 #96 评论链接），不改本文获批需求与判据
+- 实施基线：`origin/main@cf0240353616cfabd82e68480dfd13b3639e18b5`；验收证据及缺项见 [实施 PR #98](https://github.com/Strelizialeomon/spec-flow/pull/98)，不改本文获批需求与判据
 - 核对基准：`spec-flow origin/main@a63ac09`；本轮评审基于初稿 `9b9029a`
 - 决策来源：本轮用户选择「显式升级一次」「全要」及评审后的「改」，并要求同时核对正文的可执行性、加强已采用 ADR 的老项目唤起
 - ADR：本仓未声明项目级采用，本次不因此启用 ADR；本文记录本次获批需求，不替其他项目写业务决定
