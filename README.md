@@ -1,47 +1,74 @@
 # spec-flow
 
-**A process for AI coding agents that moves every rework to its cheapest moment.** Agree on the spec before any code exists, run it through two phases and one shared gate, and let a human — not the agent — decide how much review each deliverable gets.
+**A set of process rules for AI coding agents.** You clone it into your agent's skills directory. From then on, when you ask for work worth designing, the agent agrees with you on what it is building *before* it writes code — and everything it produces has to pass a gate where **you** decide how much review it gets.
+
+Nothing runs. No CLI, no service, no dependency, no account. It is markdown the agent reads, plus the paper trail those rules produce: a spec before the code, an issue before the work, a permanent link between the two.
+
+The body is held to about 5,000 characters — roughly 4,300 tokens — on purpose. When Claude Code compacts a long conversation, it re-attaches only the first 5,000 tokens of a skill, so a longer body would quietly start losing its own tail. [`scripts/check-docs.sh`](scripts/check-docs.sh) fails the check if it grows past the budget.
+
+Every rule in it came out of something that went wrong on a real job. The full dossier is [`references/rationale.md`](references/rationale.md) — 22 entries with dates, numbers, and what changed as a result.
 
 **English** · [中文](README.zh-CN.md)
 
 > The workflow itself is written in Chinese (`SKILL.md` and `references/`). This README is the English entry point, so you can tell whether it's for you before opening anything.
 
-The rules here grew out of things that actually happened. [`references/rationale.md`](references/rationale.md) keeps the dossier — 22 entries, each with the case, the number or the investigation behind it.
+<!-- s:shape -->
+## What using it looks like
+
+You type the same request either way: *"add image upload to the profile page."*
+
+**Without it**, the agent starts writing. Forty minutes later there is a diff across eleven files, a database table you didn't ask for, and a resize limit it picked itself. Reading the code is how you find out what it decided.
+
+**With it**, it comes back in two minutes with the three questions it cannot answer for you — where do the files live, does this need to work on mobile, what should happen to a 40MB upload — and nothing else. Then it writes a spec: what changes, what it will deliberately leave alone, how each part will be verified. That spec goes to a pull request of its own, before any code, and you get a card asking how much review it should get — **none / light / heavy / heavy + mutation testing**. You point at one. It then implements in a git worktree of its own, and hands you a second card before merging.
+
+The misunderstanding that used to surface at minute forty now surfaces at minute two.
 
 <!-- s:problem -->
 ## The problem
 
-Agents are good at producing work and bad at stopping to align first. Left alone they will:
+A coding agent fails at its seams, not inside its steps:
 
-- **start coding from a half-formed request** — and you only meet the misunderstanding in the diff, by which point everything downstream has been built on top of it;
-- **finish a large chunk in one go** — so there is no checkpoint where the wrong assumption could have been caught, and one wrong turn costs the whole chunk;
-- **report "an independent reviewer checked this"** when the reviewer was a subagent they spawned, prompted, and framed themselves — chosen by the party that wants the green light. You think a second pair of eyes looked at it. None did.
+- **between your request and its understanding** — it starts from a half-formed brief, and you meet the misunderstanding in the diff;
+- **between one deliverable and the next** — it finishes a large chunk in one go, so nothing interrupts a wrong turn before the whole chunk is built on top of it;
+- **between the agent and the thing checking the agent** — it reports "an independent reviewer checked this" when the reviewer was a subagent it spawned, prompted and framed itself, chosen by the party that wants the green light;
+- **between two agents** — both read the same issue as unclaimed and do the same work twice;
+- **between last month's decision and today's work** — the reasoning behind a change lives in a conversation nobody can reopen.
+
+None of these are model failures, and none are fixed by trying harder inside a single step. They are unowned boundaries.
+
+<!-- s:scars -->
+## Where the rules came from
+
+Not from theory. Each rule is the residue of a specific failure, recorded with its date and numbers in [`references/rationale.md`](references/rationale.md). Five of the 22:
+
+- **A criterion was widened and nothing else moved.** An IDC rule went from "CIDR ranges" to "CIDR ∪ ASN". Only that sentence changed — while the mechanism, the implementation, the steps and the acceptance criteria all still described the old behaviour, as did the parent document's overview. Building from that spec would have shipped CIDR-only. An independent review caught two severe findings. → **R1**: change a criterion, sync every place it lands.
+- **Two agents claimed the same issue.** Both read *open* as "nobody is working on this" and both did the work. One was wasted. → **R7**: the claim is the worktree being created, not the issue's state.
+- **A customer fell through a twelve-way split.** Two of the specs each wrote their own version of "is this account enabled" — one checked a flag, the other only checked that a row could be found by name. Nothing owned the difference, and it surfaced in implementation. → **R15**: splitting means writing down the dependency edges, not just the file boundaries.
+- **One spec, seventeen rewrites.** A project's single spec went from 448 to 762 lines over 17 commits, 14 of them changing its body. Its owner finally interrupted the agent mid-task: *"this is a new requirement — write a new spec, stop editing that one."* → **R12**: editing a merged spec is a card you answer, not a judgement call.
+- **Five processes, one lock.** Measured: five processes raced for the same issue number; exactly one created the worktree and the other four were rejected. → **R6**: the lock is git's, not ours.
 
 <!-- s:what -->
 ## How it solves them
 
-**Two phases, one shared gate.**
+**Two phases, one shared gate.** Each step owns one of the seams above.
 
 - **Phase 1 · design** — describe the need → agree on it → spec → PR → gate → merge → the spec gets its own issue. No code yet.
-- **Phase 2 · implementation** — claim the issue (the git worktree *is* the lock) → implement → gate → merge → backfill the issue and release the lock.
+- **Phase 2 · implementation** — claim the issue → implement → gate → merge → backfill the issue and release the lock.
 
-At the shared gate the agent lays out the review levels — **none / light / heavy / heavy + mutation testing** — and **you** pick one, fresh for each deliverable. Nothing carries over from the last one.
-
-Each step exists for a failure you can name:
-
-| The step | The failure it stops |
+| The step | The seam it owns |
 |---|---|
-| Agreeing on the need is a hard gate — no spec file gets touched until you nod | the misunderstanding you'd otherwise meet in the diff |
-| Every deliverable passes its own gate | one wrong turn costing the whole chunk |
-| The agent may not produce a review verdict on its own behalf | the review that never happened |
-| An issue anchors a permanent link to the merged spec | "why was it built this way" drifting out of reach |
+| Agreeing on the need is a hard gate — no spec file gets touched until you nod | request ↔ understanding |
+| Every deliverable passes a gate of its own | one deliverable ↔ the next |
+| The agent may not produce a review verdict on its own behalf | the agent ↔ its checker |
+| Claiming an issue means creating a worktree named after it | one agent ↔ another |
+| An issue anchors a permanent link to the merged spec | last month ↔ today |
 
 <!-- s:self-review -->
-## The part worth stealing: a subagent is not a second opinion
+## The one rule worth stealing: a subagent is not a second opinion
 
-Everything the agent spawns is still the agent — same task, same prompt, same framing, chosen by the party who wants the green light. So a subagent's conclusions weigh exactly as much as the agent's own. No more.
+Everything the agent spawns is still the agent — same task, same prompt, same framing, chosen by the party that wants the green light. A subagent's conclusion weighs exactly as much as the agent's own. No more.
 
-spec-flow therefore forbids the agent from producing a review verdict on its own behalf: the review level is yours to pick, and it may not dispatch a reviewer to do the judging for it. When a step genuinely needs an opinion that isn't the agent's, that step stops and waits for a human.
+So spec-flow forbids the agent from producing a review verdict on its own behalf: the review level is yours to pick, and it may not dispatch a reviewer to do the judging for it. When a step genuinely needs an opinion that isn't the agent's, the step stops and waits for a human.
 
 <!-- s:smooth -->
 ## Why it doesn't feel heavy
@@ -51,10 +78,10 @@ It isn't restraint bolted onto the agent. It's rework moved to where rework is c
 | The design | Why it's smooth |
 |---|---|
 | The review level is chosen per deliverable and never inherited | Cost tracks risk: **none / light / heavy / heavy + mutation testing**. A one-line doc change costs nothing; a core change gets two reviewers. No blanket policy to argue about. |
-| An unanswered card never adds anything | All six cards default away from action: no review, no merge, no new spec, no exception, no edit. |
-| Interruptions are split by whether they need an answer | A new mechanism gets its own card, because that's the thing you'd later ask "what is this, and where did it come from". Everything else the agent decided by itself — defaults, naming, where things land — is listed in one block at the end for you to skim, not answer one by one. |
-| The judgment is taken away from the agent | It may not decide "this one counts as core." That removes the argument, not just the risk. |
-| A rule that came out of an incident cites it by `R` number | Disagree with that rule and the incident is one hop away. You never re-litigate it from scratch. |
+| An unanswered card never adds anything | All six cards default away from acting: no review, no merge, no new spec, no exception, no edit. |
+| Interruptions are split by whether they need an answer | A new mechanism gets its own card — that's the thing you'd later ask "what is this, and where did it come from". Everything else the agent decided by itself (defaults, naming, where things land) is listed in one block at the end to skim, not answer one by one. |
+| The judgement is taken away from the agent | It may not decide "this one counts as core". That removes the argument, not just the risk. |
+| Every rule cites the incident that produced it | Disagree with a rule and its origin is one hop away. You never re-litigate it from scratch. |
 
 <!-- s:longrun -->
 ## Why it survives long work
@@ -63,17 +90,18 @@ It isn't restraint bolted onto the agent. It's rework moved to where rework is c
 
 | To know | It's written in | Why you can trust it |
 |---|---|---|
-| Who is working on it | the worktree name — the lock itself | Creating `issue-42` succeeds = nobody has it; refused = somebody does. (`git worktree list` shows the same thing at a glance, but the lock is the create succeeding.) No separate assignment board to fall out of sync. |
+| Who is working on it | the worktree name — the lock itself | Creating `issue-42` succeeds = nobody has it; refused = somebody does. (`git worktree list` shows the same at a glance, but the lock is the create succeeding.) No separate assignment board to fall out of sync. |
 | How far along it is | the issue's state and the pull request | Durable, readable across sessions, unchanged when you switch machines or hand it to someone else. |
 | Why it was built that way | the spec in `docs/specs/`, linked from the issue | It passed the gate, it's in prose, and it's versioned with the code — diffable, blamable, revertable. |
 
-Tools that keep this in their own private index drift without telling you. This one can't: git says so, loudly, at the moment it happens.
+Tools that keep this in their own private index drift without telling you. This one can't: git says so, loudly, the moment it happens.
 
 <!-- s:limits -->
 ## What it doesn't do
 
-- **It doesn't remember the process.** What was tried and abandoned, which dead end cost an hour, which step you were mid-way through — if it wasn't written down, it's gone. One part does get written down: the review trail, each finding and how it was disposed of, appended to the spec. So a new session reads *what to do*, *how far along*, and *what was caught last time* — but not *why the road not taken didn't work*.
+- **It doesn't remember the process.** What was tried and abandoned, which dead end cost an hour, which step you were mid-way through — if it wasn't written down, it's gone. One part does get written down: the review trail, every finding and how it was disposed of, appended to the spec. So a new session reads *what to do*, *how far along*, and *what was caught last time* — but not *why the road not taken didn't work*.
 - **It isn't a runtime.** Nothing here schedules an agent, checkpoints a run, or resumes one that died at 3am. It assumes you are there for the gate.
+- **Most of it isn't enforced.** These are rules the agent is asked to follow, not mechanisms that force it. The parts that *are* enforced are enforced by git (the worktree lock) and by this repo's own check script.
 - **It assumes GitHub.** Issues and pull requests are load-bearing, not decoration.
 
 <!-- s:install -->
@@ -106,9 +134,9 @@ To adopt it in one of your own repos, say *"apply spec-flow to this project"*. I
 <!-- s:evidence -->
 ## This repo is its own case study
 
-spec-flow is developed with spec-flow. As of 2026-10-16: 64 merged PRs, 17 issues, 16 specs in `docs/specs/`. Each spec is the design record of one change; the PRs that went through a review hold its findings in the discussion, including the findings that changed a rule.
+spec-flow is developed with spec-flow. As of 2026-10-16: 66 merged PRs, 17 issues, 16 specs in `docs/specs/`. Each spec is the design record of one change; the PRs that went through a review hold its findings in the discussion, including the findings that changed a rule.
 
-Clauses carry a pointer like `（依据：rationale R12）` into [`references/rationale.md`](references/rationale.md), where the case, the statistic or the research behind that rule lives — the anti-scraping job where a judgement criterion was widened in one place and left stale in four others plus the parent document's overview, so building from the spec would have produced the old behaviour; the completion contract that stops "no bugs" from meaning "we promise nothing will ever break". If you want to know *why* a process rule looks the way it does, not just what it says, that file is the reason to read this repo.
+The rules are cited by `R` number, like `（依据：rationale R12）`, and every one of those points into [`references/rationale.md`](references/rationale.md). That file is the reason to read this repo: it is where the 22 incidents live in full — the IDC criterion widened in one place while four others and the parent document stayed stale, the completion contract that stops "no bugs" from meaning "we promise nothing will ever break", and a controlled comparison of two projects where one adopted architecture decision records and one didn't.
 
 <!-- s:docs -->
 ## Files
