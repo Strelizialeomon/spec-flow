@@ -196,6 +196,8 @@ try:
                 continue
             if st.startswith("```") or st.startswith("~~~"):
                 fence = st[:3]
+                # 保留区域断点，别把围栏两侧的说明、表行或字段重新拼接。
+                out.extend(("", "<!-- fenced block omitted -->", ""))
                 continue
             out.append(line)
         return out
@@ -212,7 +214,7 @@ try:
     src = unfenced(body)
     headers = [i for i, l in enumerate(src)
                if re.fullmatch(r"\|\s*文件\s*\|\s*何时读\s*\|\s*", l)]
-    memo_intro, memo_region, reference_rows = "", "", []
+    memo_intro, reference_rows = "", []
     if len(headers) != 1:
         problems.append(f"参考表表头必须恰有一份（文件 / 何时读），实际 {len(headers)} 份")
     else:
@@ -226,7 +228,6 @@ try:
         while up - 1 >= 0 and src[up - 1].strip():
             up -= 1
         memo_intro = "\n".join(src[up:hdr])
-        memo_region = "\n".join(src[up:hi + 1])
         reference_rows = src[hdr + 1:hi + 1]
     # 登记只取参考表本身；把选修行搬到其他表不能继续算作登记。
     for line in reference_rows:
@@ -313,8 +314,11 @@ try:
             table_done = True
         in_table = False
     if memo_rows or reg_mods:
-        if "默认关闭" not in memo_region:
-            problems.append("参考表区域缺「默认关闭」——不能用全文其他位置代替")
+        missing_defaults = [path for path, rest in memo_rows.items()
+                            if "默认关闭" not in memo_intro and "默认关闭" not in rest]
+        if missing_defaults:
+            problems.append("参考表区域缺「默认关闭」——选修须有共通或本行声明：" +
+                            "、".join(missing_defaults))
         # 项目级选修须有共通或本行的已采用条件；其他行的按需标记不能代答。
         missing_read_conditions = [path for path in rows_to_mod.values()
                                    if "声明已采用" not in memo_intro
