@@ -212,7 +212,7 @@ try:
     src = unfenced(body)
     headers = [i for i, l in enumerate(src)
                if re.fullmatch(r"\|\s*文件\s*\|\s*何时读\s*\|\s*", l)]
-    memo_region, reference_rows = "", []
+    memo_intro, memo_region, reference_rows = "", "", []
     if len(headers) != 1:
         problems.append(f"参考表表头必须恰有一份（文件 / 何时读），实际 {len(headers)} 份")
     else:
@@ -225,6 +225,7 @@ try:
             up -= 1
         while up - 1 >= 0 and src[up - 1].strip():
             up -= 1
+        memo_intro = "\n".join(src[up:hdr])
         memo_region = "\n".join(src[up:hi + 1])
         reference_rows = src[hdr + 1:hi + 1]
     # 登记只取参考表本身；把选修行搬到其他表不能继续算作登记。
@@ -314,8 +315,13 @@ try:
     if memo_rows or reg_mods:
         if "默认关闭" not in memo_region:
             problems.append("参考表区域缺「默认关闭」——不能用全文其他位置代替")
-        if "声明已采用" not in memo_region and not any(k in memo_region for k in NOADOPT):
-            problems.append("参考表区域缺读取条件——须写项目规则声明已采用或仅本次按需")
+        # 项目级选修须有共通或本行的已采用条件；其他行的按需标记不能代答。
+        missing_read_conditions = [path for path in rows_to_mod.values()
+                                   if "声明已采用" not in memo_intro
+                                   and "声明已采用" not in memo_rows[path]]
+        if missing_read_conditions:
+            problems.append("参考表区域缺读取条件——项目级选修须写项目规则声明已采用：" +
+                            "、".join(missing_read_conditions))
         if not memo_rows:
             problems.append("参考表区域没有任何选修行——选修行被删除或移出参考表")
     for mod, got in sorted(reg_mods.items()):
