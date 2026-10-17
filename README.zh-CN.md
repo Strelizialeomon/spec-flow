@@ -138,7 +138,7 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 
 首次接入说 **「把 spec-flow 应用到本项目」**：写入 `AGENTS.md` 指针，仅在已有 `CLAUDE.md` 时补 `@AGENTS.md`，不抄正文。**「更新本项目的 spec-flow 接入」** 显式校验和升级旧入口，包括已采用的 ADR 动作与旧文档读序；重复执行幂等、不自动启用未采用选修，普通任务不顺手改制度。
 
-**「为本项目配置代码地图」「启用 code-map」** 共用上述检查。按语义识别变体，真正未知描述问清。地图保留工具、已验版本、四类真实命令和版控范围；持久授权写清来源、精确路径、触发与工作区作用域。机器安装单独同意，setup、Hook、MCP、daemon、脚本走可执行资产升级闸；缺权限或覆盖就如实回落源码，不伪报地图通过。
+**「为本项目配置代码地图」「启用 code-map」** 共用上述检查。按语义识别变体，真正未知描述问清。地图保留工具、已验版本、四类真实命令和版控范围；接入时按实际子项目配置与引用方式对照源码，记录盲区和验证证据，`complete` 与抽查通过都不证明全仓覆盖。子项目查询只补充跨项目检索与整个交付 diff 对账。持久授权写清来源、精确路径、触发与工作区作用域。机器安装单独同意，setup、Hook、MCP、daemon、脚本走可执行资产升级闸；缺权限或覆盖就如实回落源码，不伪报地图通过。
 
 已采用 ADR 的项目在调查、旧 issue 或免方案期首次实施前检索，明确长期拍板后按条件记录，收尾核本次处理。实施前必须读当前获批施工 spec；只有历史规格在追溯时按需读。这些嵌在已有动作，不增加步骤或三道固定 ADR 闸。
 
@@ -157,11 +157,11 @@ spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R25） |
+| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R26） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
-| `references/code-map.md` | 地图就绪、持久权限、版控范围、多工作区、目标 / diff 覆盖与回落 |
+| `references/code-map.md` | 地图就绪、权限、版控范围、多工作区、覆盖分母、引用核对、盲区与回落 |
 | `references/done-criteria.md` | 完成标准、观察式收尾、三类例外 |
 | `references/split-large-spec.md` | 拆大 spec：交付物地图、依赖台账 |
 | `references/adr-decision-records.md` | 可选：架构决策记录（ADR） |

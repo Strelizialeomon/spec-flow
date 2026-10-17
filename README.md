@@ -138,7 +138,7 @@ You can also enter from the middle: "do #12" starts phase 2 for an existing issu
 
 To adopt it, say **"apply spec-flow to this project"**. It writes a pointer in `AGENTS.md`, adding `@AGENTS.md` to `CLAUDE.md` only if that file exists. **"Update this project's spec-flow integration"** explicitly checks and upgrades an old entry, including already adopted ADR actions and document reading order; repeat runs are idempotent and do not enable unadopted options. Ordinary work does not repair project rules as a side effect.
 
-**"Configure a code map for this project"** or **"enable code-map"** reaches the same adoption checks. Natural-language equivalents work; unknown additions are clarified. The map records the tool, verified version, four real query commands and a version-controlled scope. Persistent permission records the source, exact writable paths, triggers and worktree scope. Tool installation needs separate consent; setup, hooks, MCP, daemons and scripts need the executable-asset gate. Missing permission or coverage means an honest source-search fallback, not a passing map check.
+**"Configure a code map for this project"** or **"enable code-map"** reaches the same adoption checks. Natural-language equivalents work; unknown additions are clarified. The map records the tool, verified version, four real query commands and a version-controlled scope. Adoption checks actual references against source code for the relevant subproject configurations and reference forms, recording known blind spots and evidence; neither `complete` nor a passing sample proves whole-repository coverage. Subproject queries supplement cross-project searches and checks against the full delivery diff. Persistent permission records the source, exact writable paths, triggers and worktree scope. Tool installation needs separate consent; setup, hooks, MCP, daemons and scripts need the executable-asset gate. Missing permission or coverage means an honest source-search fallback, not a passing map check.
 
 Already adopted ADR rules apply during discovery, before old-issue or design-exempt implementation, on explicit long-term decisions, and when checking this task's outcome. The current approved spec must be read before implementation; only historical specs are optional tracing material. These are existing action points, not new steps or three fixed ADR gates.
 
@@ -157,11 +157,11 @@ The rules are cited by `R` number, like `（依据：rationale R12）`, and ever
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R25) |
+| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R26) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
-| `references/code-map.md` | Map readiness, persistent permission, versioned scope, worktrees, target / diff coverage and fallback |
+| `references/code-map.md` | Map readiness, permission, versioned scope, worktrees, coverage denominators, reference checks, blind spots and fallback |
 | `references/done-criteria.md` | Done criteria, observational close-outs, the three exception types |
 | `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
 | `references/adr-decision-records.md` | Optional: architecture decision records |
