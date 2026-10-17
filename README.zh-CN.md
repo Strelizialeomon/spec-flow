@@ -9,11 +9,11 @@
 
 **给 AI 编码 agent 用的一套流程规矩。** 把它 clone 进你的 agent 的技能目录；此后你交办一件值得先设计的活时，agent 会先跟你把「要做什么」谈定，**再**动代码——而它产出的每一份东西都要过一道闸，**由你**决定给它多少审核。
 
-流程本身没有运行时或服务。它是 agent 读的 Markdown，加上纸面痕迹：代码前有 spec、动手前有 issue、两者有永久链接。适用的代码地图使用单独安装的工具；配置项目不等于允许安装工具或添加 Hook。
+流程本身没有运行时或服务。它是 agent 读的 Markdown，加上纸面痕迹：代码前有 spec、动手前有 issue、两者有永久链接。代码地图默认停用；普通任务通过源码检索、实际 diff 和相关测试核对影响。
 
 本次正文预算为 **4,700 字符**、frontmatter **500**、整份 **5,200**，均含换行。[`scripts/check-docs.sh`](scripts/check-docs.sh) 同时核三笔账，并拦额外元信息和多行 description。字符预算不是跨客户端的 token 或压缩保留保证；动作细则使用当刻必须读，压缩丢失后重新读。
 
-**每条规矩都有可回溯来源。** [`references/rationale.md`](references/rationale.md) 有 **25 条记录**，包括日期、实测、决定、代价和验证边界。
+**每条规矩都有可回溯来源。** [`references/rationale.md`](references/rationale.md) 有 **27 条记录**，包括日期、实测、决定、代价和验证边界。
 
 [English](README.md) · **中文**
 
@@ -138,7 +138,7 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 
 首次接入说 **「把 spec-flow 应用到本项目」**：写入 `AGENTS.md` 指针，仅在已有 `CLAUDE.md` 时补 `@AGENTS.md`，不抄正文。**「更新本项目的 spec-flow 接入」** 显式校验和升级旧入口，包括已采用的 ADR 动作与旧文档读序；重复执行幂等、不自动启用未采用选修，普通任务不顺手改制度。
 
-**「为本项目配置代码地图」「启用 code-map」** 共用上述检查。按语义识别变体，真正未知描述问清。地图保留工具、已验版本、四类真实命令和版控范围；接入时按实际子项目配置与引用方式对照源码，记录盲区和验证证据，`complete` 与抽查通过都不证明全仓覆盖。子项目查询只补充跨项目检索与整个交付 diff 对账。持久授权写清来源、精确路径、触发与工作区作用域。机器安装单独同意，setup、Hook、MCP、daemon、脚本走可执行资产升级闸；缺权限或覆盖就如实回落源码，不伪报地图通过。
+**代码地图默认停用。** 普通任务和接入升级不查图、不检查地图就绪、不补配置，仍按需用源码检索、实际 diff 和相关测试核影响。只有用户另行明确要求试用 / 恢复时才读[地图细则](references/code-map.md)；旧接入、工具已安装或现有配置不代表恢复。当次试用不授权长期启用、安装或 Hook，试用结果与停用决定见 rationale R27。
 
 已采用 ADR 的项目在调查、旧 issue 或免方案期首次实施前检索，明确长期拍板后按条件记录，收尾核本次处理。实施前必须读当前获批施工 spec；只有历史规格在追溯时按需读。这些嵌在已有动作，不增加步骤或三道固定 ADR 闸。
 
@@ -157,17 +157,17 @@ spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R26） |
+| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R27） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
-| `references/code-map.md` | 地图就绪、权限、版控范围、多工作区、覆盖分母、引用核对、盲区与回落 |
+| `references/code-map.md` | 默认停用；明确试用时的查询、覆盖边界与回落细则 |
 | `references/done-criteria.md` | 完成标准、观察式收尾、三类例外 |
 | `references/split-large-spec.md` | 拆大 spec：交付物地图、依赖台账 |
 | `references/adr-decision-records.md` | 可选：架构决策记录（ADR） |
 | `references/documentation-lifecycle.md` | 可选：spec / ADR / issue 分工 |
 | `references/issue-status-labels.md` | 可选：issue 状态标签 |
-| `references/apply-to-project.md` | 应用、显式升级、地图配置的共用检查；指针模板与资产边界 |
+| `references/apply-to-project.md` | 应用、显式升级、指针模板与资产边界；地图恢复须明确请求 |
 | `references/adoption-model.md` | 采纳模型的历史解释，不增加流程义务 |
 | `docs/maintainer-notes.md` | 本仓自己的说明：这份检出怎么接的线、最早的提交为什么是重建的 |
 | `scripts/check-docs.sh` | 正文 / frontmatter / 整份预算、路径、双语同步、参考表区域采用护栏 |

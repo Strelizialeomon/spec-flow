@@ -9,11 +9,11 @@
 
 **A set of process rules for AI coding agents.** You clone it into your agent's skills directory. From then on, when you ask for work worth designing, the agent agrees with you on what it is building *before* it writes code — and everything it produces has to pass a gate where **you** decide how much review it gets.
 
-The workflow has no runtime or service. It is markdown the agent reads, plus a paper trail: a spec before code, an issue before work, and a permanent link between them. An applicable code map uses a separately installed tool; project configuration does not authorize installing it or adding hooks.
+The workflow has no runtime or service. It is markdown the agent reads, plus a paper trail: a spec before code, an issue before work, and a permanent link between them. Code mapping is disabled by default; ordinary tasks use source searches, the actual diff and relevant tests to check impact.
 
 This revision limits the body to **4,700 characters**, frontmatter to **500**, and the whole skill to **5,200**, including newlines. [`scripts/check-docs.sh`](scripts/check-docs.sh) checks all three and rejects extra metadata fields or multiline descriptions. These are character budgets, not a cross-client token or compaction guarantee. Action-specific details are mandatory when needed; after compaction hides them, the agent reads them again.
 
-Every rule has a recorded origin. The dossier is [`references/rationale.md`](references/rationale.md): 25 entries with dates, measurements, decisions, costs and verification limits.
+Every rule has a recorded origin. The dossier is [`references/rationale.md`](references/rationale.md): 27 entries with dates, measurements, decisions, costs and verification limits.
 
 **English** · [中文](README.zh-CN.md)
 
@@ -138,7 +138,7 @@ You can also enter from the middle: "do #12" starts phase 2 for an existing issu
 
 To adopt it, say **"apply spec-flow to this project"**. It writes a pointer in `AGENTS.md`, adding `@AGENTS.md` to `CLAUDE.md` only if that file exists. **"Update this project's spec-flow integration"** explicitly checks and upgrades an old entry, including already adopted ADR actions and document reading order; repeat runs are idempotent and do not enable unadopted options. Ordinary work does not repair project rules as a side effect.
 
-**"Configure a code map for this project"** or **"enable code-map"** reaches the same adoption checks. Natural-language equivalents work; unknown additions are clarified. The map records the tool, verified version, four real query commands and a version-controlled scope. Adoption checks actual references against source code for the relevant subproject configurations and reference forms, recording known blind spots and evidence; neither `complete` nor a passing sample proves whole-repository coverage. Subproject queries supplement cross-project searches and checks against the full delivery diff. Persistent permission records the source, exact writable paths, triggers and worktree scope. Tool installation needs separate consent; setup, hooks, MCP, daemons and scripts need the executable-asset gate. Missing permission or coverage means an honest source-search fallback, not a passing map check.
+**Code mapping is disabled by default.** Ordinary work and integration updates do not query the map, check its readiness or repair its configuration. Source searches, the actual diff and relevant tests remain required where applicable. Read the [code-map notes](references/code-map.md) only when the user explicitly requests a new trial or restoration; old adoption, an installed tool or existing configuration does not restore it. A one-task trial does not authorize persistent adoption, installation or hooks. The trial results and decision are recorded in rationale R27.
 
 Already adopted ADR rules apply during discovery, before old-issue or design-exempt implementation, on explicit long-term decisions, and when checking this task's outcome. The current approved spec must be read before implementation; only historical specs are optional tracing material. These are existing action points, not new steps or three fixed ADR gates.
 
@@ -157,17 +157,17 @@ The rules are cited by `R` number, like `（依据：rationale R12）`, and ever
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R26) |
+| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R27) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
-| `references/code-map.md` | Map readiness, permission, versioned scope, worktrees, coverage denominators, reference checks, blind spots and fallback |
+| `references/code-map.md` | Disabled by default; explicit trials, coverage limits and fallback |
 | `references/done-criteria.md` | Done criteria, observational close-outs, the three exception types |
 | `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
 | `references/adr-decision-records.md` | Optional: architecture decision records |
 | `references/documentation-lifecycle.md` | Optional: spec / ADR / issue division of labour |
 | `references/issue-status-labels.md` | Optional: issue status labels |
-| `references/apply-to-project.md` | Shared checks for applying, explicitly upgrading and configuring a map; pointer templates and asset boundaries |
+| `references/apply-to-project.md` | Applying and explicitly upgrading; pointer templates, asset boundaries and explicit map-restoration requests |
 | `references/adoption-model.md` | Historical explanation of the adoption model; no additional workflow obligations |
 | `docs/maintainer-notes.md` | Repo-local notes: how this checkout is wired, why the first commits are reconstructed |
 | `scripts/check-docs.sh` | Body / frontmatter / whole-skill budgets, reference paths, README sync, region-bound adoption contract |

@@ -1,6 +1,6 @@
 ---
 name: spec-flow
-description: "复杂活的两段流程：需求确认、spec、PR 过闸、合并后开 issue；认领 issue、实施、过闸合并回填。要设计、动多个端或值得留依据的需求，开工前调用；「请你做 #N」从实施期进，每份交付物合并前均由用户选审核档位，agent 不自派。也处理「把 spec-flow 应用到本项目」「更新本项目的 spec-flow 接入」「配置代码地图 / 启用 code-map」及语义变体，可附带 ADR 等采用意图；未知描述问清。"
+description: "复杂活的两段流程：需求确认、spec、PR 过闸、合并后开 issue；认领 issue、实施、过闸合并回填。要设计、动多个端或值得留依据的需求，开工前调用；「请你做 #N」从实施期进，每份交付物合并前均由用户选审核档位，agent 不自派。也处理「把 spec-flow 应用到本项目」「更新本项目的 spec-flow 接入」及语义变体，可附带 ADR 等采用意图；未知描述问清。"
 ---
 
 # 复杂活的两段流程
@@ -9,13 +9,13 @@ description: "复杂活的两段流程：需求确认、spec、PR 过闸、合�
 
 开工读适用项目与域入口：新需求进段一、已有 issue 进段二、显式接入走〈应用到项目〉。已采用规则在相关动作执行；ADR 项目开工或压缩恢复时先读 `references/adr-decision-records.md`；需求调查、旧 issue 或免方案期首次实施前搜现行决定，拍板命中长期影响条件就记录，收尾核本次处理；未采用不加动作（依据：rationale R25）。
 
-**动笔前查代码地图**：核真实工作区、范围、目标与 diff；不可用或未覆盖目标如实回落源码，不扩批准范围。合理跳过也说明，细则见参考表。
+改动前核工作区、范围、目标及 diff，以源码和测试核影响，不扩范围。**代码地图默认停用**，仅用户明确试用/恢复时读细则（依据：rationale R27）。
 
 **段一·方案期**（新需求）
 
 1. **用户描述需求**
 2. **一起确认需求** —— 有岔路问清，不猜；能自己查判的先做
-3. **用户点头后才出 spec** —— 未确认不动 spec 文件；改动面先查图
+3. **用户点头后才出 spec** —— 未确认不动 spec 文件；改动面先核源码
 4. **开 PR → 过闸**
 5. **按需修订 → 合并**
 6. **开 issue** —— spec PR 合并后、实施前开，锚 spec 永久链接
@@ -49,7 +49,7 @@ description: "复杂活的两段流程：需求确认、spec、PR 过闸、合�
 
   | 档 | 每一份派什么 | 大致代价 |
   |---|---|---|
-  | 不审 | 无；agent 拿实际 diff 对 spec 改动面及已采用约束（受影响者查图），范围外变更停下报告 | 0 |
+  | 不审 | 无；agent 拿实际 diff 对 spec 改动面及已采用约束（受影响者核源码），范围外变更停下报告 | 0 |
   | 轻审 | 1 个：spec 期 = 规格符合性 + 两张清单；实施期 = 对抗找 bug + 范围外对账（依据：rationale R3） | 约 5 分钟 |
   | 重审 | 2 个：规格符合性（含清单 / 对账）+ 对抗找 bug | 约 10 分钟 |
   | 重审 + 变异 | 重审 + agent 自跑一次变异：判据换错、跑全量测试，全绿 = 没护栏 | 约 10 分钟 + 18 秒 |
@@ -101,7 +101,7 @@ description: "复杂活的两段流程：需求确认、spec、PR 过闸、合�
 
 ## 应用到项目
 
-应用、更新接入、配置地图及语义变体都读 `references/apply-to-project.md`。只指向、不放副本；未知描述问清，旧副本只报告、不删改。显式升级共用接入检查，普通任务不补制度或未授权配置；项目写入核具体授权、机器安装单独同意，可执行资产走 §十 升级闸（依据：rationale R21、R25）。
+应用、更新接入及语义变体都读 `references/apply-to-project.md`。只指向、不放副本；未知描述问清，旧副本只报告、不删改。显式升级共用接入检查，普通任务不补制度或未授权配置；项目写入核具体授权、机器安装单独同意，可执行资产走 §十 升级闸（依据：rationale R21、R25）。
 
 ## 项目体例与参考
 
@@ -115,11 +115,11 @@ description: "复杂活的两段流程：需求确认、spec、PR 过闸、合�
 | `references/worktree-lock.md` | 认领、撞锁、放锁时 |
 | `references/spec-revision-sync.md` | 第 5 步修订 spec 前 |
 | `references/done-criteria.md` | 写 / 核完成标准、观察收尾、例外时 |
-| `references/code-map.md` | 查图、判就绪、不可用或跳过时 |
+| `references/code-map.md` | 停用；用户明确试用/恢复时读 |
 | `references/split-large-spec.md` | 拆子 spec 时读第 1~6 节 |
 | `references/adr-decision-records.md` | 选修 `adr`——调查、实施前、拍板、收尾 |
 | `references/documentation-lifecycle.md` | 选修 `doc-lifecycle`——读序与文档分工 |
 | `references/issue-status-labels.md` | 选修 `issue-status`——阶段 / 卡点及收尾 |
-| `references/apply-to-project.md` | 应用、更新接入、配置地图时 |
+| `references/apply-to-project.md` | 应用、更新接入时 |
 | `references/adoption-model.md` | 按需了解采纳历史 |
 | `references/rationale.md` | 按需查规矩依据（R 编号） |
