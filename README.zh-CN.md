@@ -13,7 +13,7 @@
 
 本次正文预算为 **4,700 字符**、frontmatter **500**、整份 **5,200**，均含换行。[`scripts/check-docs.sh`](scripts/check-docs.sh) 同时核三笔账，并拦额外元信息和多行 description。字符预算不是跨客户端的 token 或压缩保留保证；动作细则使用当刻必须读，压缩丢失后重新读。
 
-**每条规矩都有可回溯来源。** [`references/rationale.md`](references/rationale.md) 有 **27 条记录**，包括日期、实测、决定、代价和验证边界。
+**每条规矩都有可回溯来源。** [`references/rationale.md`](references/rationale.md) 有 **28 条记录**，包括日期、实测、决定、代价和验证边界。
 
 [English](README.md) · **中文**
 
@@ -59,7 +59,7 @@
 
 **两段流程，共用一道闸。** 每一步认领上面的一条接缝。
 
-- **段一 · 方案期** —— 描述需求 → 一起确认需求 → 出 spec → 过 PR 和闸 → 合并 → 开 issue。此时一行代码都不写。
+- **段一 · 方案期** —— 描述需求 → 一起确认需求 → spec 草案 → 评估体量与实施阶段 → 你选拆或不拆 → spec 结构定稿 → 过 PR 和闸 → 合并 → 开执行 issue。此时一行代码都不写。
 - **段二 · 实施期** —— 认领 issue → 实施 → 过闸 → 合并 → 回填 issue、放锁。
 
 | 这一步 | 它认领的接缝 |
@@ -85,7 +85,7 @@ agent 派出去的一切都还是它自己——同一件事、同一段 prompt�
 | 这么设计 | 丝滑在哪 |
 |---|---|
 | 档位按每份交付物当场点，不可沿用 | 成本跟着风险走：**不审 / 轻审 / 重审 / 重审 + 变异**。改一行文档零成本，改核心才上两个审核。没有一刀切的口径要吵。 |
-| 卡没答，绝不替你加码 | 六张卡的默认值全都躲开「往前加东西」那一侧：不审、不合、不出 spec、不纳入、不动笔。 |
+| 卡没答，绝不替你加码 | 七张卡的默认值全都躲开「往前加东西」那一侧：不审、不合、不出 spec、不纳入、不动笔、不开执行单。 |
 | 打断按「要不要你答」分层 | 新增的机制单独一张卡——那正是你事后会问「这是什么、哪来的」的东西。agent 自己定的其余细节（默认值、命名、落点）统一列在末尾一块，扫一眼就行，不逐项问。 |
 | 判断权从 agent 手里收走 | 它不许自己判「这次算不算核心」。省掉的不只是风险，是那场论证。 |
 | 每条规矩都点出它从哪次事故来 | 不认同一条规矩？它的出处就在一跳之外。不用从头重新吵。 |
@@ -132,7 +132,9 @@ ln -s ~/code/spec-flow ~/.claude/skills/spec-flow
 <!-- s:usage -->
 ## 怎么用
 
-描述一件值得先设计的活就能触发它——比如「这个改动要动接口、数据库和前端」——也可以直接点名调用。接下来 agent 会就它判断不了的岔路问你，把 spec 写进 `docs/specs/<日期>-<名字>.md`，开 PR，然后把审核档位摆给你点。
+描述一件值得先设计的活就能触发它——比如「这个改动要动接口、数据库和前端」——也可以直接点名调用。agent 确认需求，把 spec 草案写进 `docs/specs/<日期>-<名字>.md`，主动评估体量，推荐拆或不拆并同时给你两个选项。有多个实施阶段就必须提醒，子 spec 仍多阶段也一样；普通编码、测试、提 PR 不算多个阶段。由你定结构，再过审核、合并，之后才开执行单。
+
+选拆得到中小执行 spec、每份对应的执行 issue，以及总纲和 1 张仅跟踪的父 issue。稳定组标识和子件编号贯通文件名、spec 和 issue 标题；父子关系管归属，阻塞关系管真依赖。尽可能并行但不强制，清楚的先后依赖和共同发布安排可以保留。选不拆就保留 1 份 spec、1 张执行 issue，不偷偷换成多张阶段单。
 
 也可以从中间进：说「做 #12」就从段二开始，同样要过闸才能合。
 
@@ -157,13 +159,13 @@ spec-flow 是用 spec-flow 开发的。2026-10-16 这个时点的账面：66 个
 | `SKILL.md` | 流程正文——agent 加载的就是它 |
 | `AGENTS.md` | 本仓的维护规矩（给 agent 看的） |
 | `CLAUDE.md` | 一行 `@AGENTS.md` |
-| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R27） |
+| `references/rationale.md` | 每条规矩的依据：案例、实测、决定（R1–R28） |
 | `references/gate-details.md` | 闸怎么执行：审核、文档检查、一卡盖批 |
 | `references/worktree-lock.md` | 认领 issue；worktree 那把锁，以及它怎么坏 |
 | `references/spec-revision-sync.md` | 改一条判据要同步所有落点 |
 | `references/code-map.md` | 默认停用；明确试用时的查询、覆盖边界与回落细则 |
 | `references/done-criteria.md` | 完成标准、观察式收尾、三类例外 |
-| `references/split-large-spec.md` | 拆大 spec：交付物地图、依赖台账 |
+| `references/split-large-spec.md` | 开单前评估与选择、单交付拆分、稳定编号及父子单；地图与依赖 |
 | `references/adr-decision-records.md` | 可选：架构决策记录（ADR） |
 | `references/documentation-lifecycle.md` | 可选：spec / ADR / issue 分工 |
 | `references/issue-status-labels.md` | 可选：issue 状态标签 |
