@@ -13,7 +13,7 @@ The workflow has no runtime or service. It is markdown the agent reads, plus a p
 
 This revision limits the body to **4,700 characters**, frontmatter to **500**, and the whole skill to **5,200**, including newlines. [`scripts/check-docs.sh`](scripts/check-docs.sh) checks all three and rejects extra metadata fields or multiline descriptions. These are character budgets, not a cross-client token or compaction guarantee. Action-specific details are mandatory when needed; after compaction hides them, the agent reads them again.
 
-Every rule has a recorded origin. The dossier is [`references/rationale.md`](references/rationale.md): 27 entries with dates, measurements, decisions, costs and verification limits.
+Every rule has a recorded origin. The dossier is [`references/rationale.md`](references/rationale.md): 28 entries with dates, measurements, decisions, costs and verification limits.
 
 **English** · [中文](README.zh-CN.md)
 
@@ -59,7 +59,7 @@ Not from theory. Each rule is the residue of a specific failure, recorded with i
 
 **Two phases, one shared gate.** Each step owns one of the seams above.
 
-- **Phase 1 · design** — describe the need → agree on it → spec → PR → gate → merge → the spec gets its own issue. No code yet.
+- **Phase 1 · design** — describe the need → agree on it → draft a spec → assess size and implementation milestones → you choose split or keep → finalize the spec structure → PR → gate → merge → execution issues. No code yet.
 - **Phase 2 · implementation** — claim the issue → implement → gate → merge → backfill the issue and release the lock.
 
 | The step | The seam it owns |
@@ -85,7 +85,7 @@ It isn't restraint bolted onto the agent. It's rework moved to where rework is c
 | The design | Why it's smooth |
 |---|---|
 | The review level is chosen per deliverable and never inherited | Cost tracks risk: **none / light / heavy / heavy + mutation testing**. A one-line doc change costs nothing; a core change gets two reviewers. No blanket policy to argue about. |
-| An unanswered card never adds anything | All six cards default away from acting: no review, no merge, no new spec, no exception, no edit. |
+| An unanswered card never adds anything | All seven cards default away from acting: no review, no merge, no new spec, no exception, no edit, no execution issue. |
 | Interruptions are split by whether they need an answer | A new mechanism gets its own card — that's the thing you'd later ask "what is this, and where did it come from". Everything else the agent decided by itself (defaults, naming, where things land) is listed in one block at the end to skim, not answer one by one. |
 | The judgement is taken away from the agent | It may not decide "this one counts as core". That removes the argument, not just the risk. |
 | Every rule cites the incident that produced it | Disagree with a rule and its origin is one hop away. You never re-litigate it from scratch. |
@@ -132,7 +132,9 @@ Requirements: an agent that discovers skills, runs shell commands (`git worktree
 <!-- s:usage -->
 ## Using it
 
-Trigger it by describing work that deserves designing — "this touches the API, the DB and the frontend" — or invoke it by name. From there the agent asks about the forks it cannot decide, writes a spec to `docs/specs/<date>-<name>.md`, opens a PR, and hands you a review card.
+Trigger it by describing work that deserves designing — "this touches the API, the DB and the frontend" — or invoke it by name. The agent confirms the requirement and writes a spec draft to `docs/specs/<date>-<name>.md`, assesses its size, and recommends splitting or keeping it with both choices. Multiple implementation milestones, including in a child spec, always prompt a reminder; ordinary coding, testing and PR steps are not separate milestones. You choose the structure before review and merging; execution issues come afterward.
+
+Splitting produces smaller execution specs, each with its own execution issue, plus an overview and one tracking-only parent issue. A stable group ID and child number connect filenames, specs and issue titles; parent-child links show membership, while blocking links show real dependencies. Maximize parallel work where practical, without requiring it: explicit sequential dependencies and coordinated releases are allowed. Choosing not to split preserves one spec and one execution issue, rather than silently creating a set of phase-only issues.
 
 You can also enter from the middle: "do #12" starts phase 2 for an existing issue, and still passes the gate before merging.
 
@@ -157,13 +159,13 @@ The rules are cited by `R` number, like `（依据：rationale R12）`, and ever
 | `SKILL.md` | The workflow itself — the file the agent loads |
 | `AGENTS.md` | This repo's maintenance rules for the agent |
 | `CLAUDE.md` | One line: `@AGENTS.md` |
-| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R27) |
+| `references/rationale.md` | Why each rule exists: cases, measurements, decisions (R1–R28) |
 | `references/gate-details.md` | How the gate runs: reviews, doc checks, batching |
 | `references/worktree-lock.md` | Claiming an issue; the worktree lock, and how it breaks |
 | `references/spec-revision-sync.md` | Changing one clause means syncing every place it lands |
 | `references/code-map.md` | Disabled by default; explicit trials, coverage limits and fallback |
 | `references/done-criteria.md` | Done criteria, observational close-outs, the three exception types |
-| `references/split-large-spec.md` | Splitting a big spec: deliverable map, dependency ledger |
+| `references/split-large-spec.md` | Pre-issue sizing and choice, small delivery units, stable IDs and parent-child issues; maps and dependencies |
 | `references/adr-decision-records.md` | Optional: architecture decision records |
 | `references/documentation-lifecycle.md` | Optional: spec / ADR / issue division of labour |
 | `references/issue-status-labels.md` | Optional: issue status labels |
