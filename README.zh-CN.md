@@ -1,8 +1,9 @@
 <p align="center">
-  <img alt="spec-flow" src="assets/logo/spec-flow.svg" width="480">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/spec-flow-lockup-dark.svg">
+    <img alt="spec-flow" src="assets/logo/spec-flow-lockup.svg" width="480">
+  </picture>
 </p>
-
-# spec-flow
 
 **给 AI 编码 agent 用的一套流程规矩。** 把它 clone 进你的 agent 的技能目录；此后你交办一件值得先设计的活时，agent 会先跟你把「要做什么」谈定，**再**动代码——而它产出的每一份东西都要过一道闸，**由你**决定给它多少审核。
 

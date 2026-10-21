@@ -1,66 +1,89 @@
 {
   "name": "spec-flow",
-  "selected_variant": "A-pure-red-fold",
-  "source": {
-    "path": "source/c-original.png",
-    "sha256": "a98678734589f1a9e82b52272cfeb641d375c5f442bdddbb5dd6bcc34d09093c",
-    "width": 1254,
-    "height": 1254,
-    "generation_model": "gpt-image-2",
-    "generation_task_id": "14-c4026aec-401f-4d81-b235-aa71f3e7bdb9",
-    "role": "original_contour_reference"
+  "selected_variant": "open-passage",
+  "supersedes": {
+    "variant": "A-pure-red-fold",
+    "spec": "../../docs/specs/2026-10-21-red-fold-logo.md"
   },
-  "approved_vector": {
-    "path": "../../docs/specs/assets/2026-10-21-red-fold-logo.svg",
-    "sha256": "0570755a1fa99ec4edad7750ca876a3d4a980cf178bdf9cbf1e93f734ba8a237",
-    "spec": "../../docs/specs/2026-10-21-red-fold-logo.md",
-    "production_changes": [
-      "title and description only"
-    ]
+  "source": {
+    "path": "../../docs/specs/assets/2026-10-21-open-passage-logo.svg",
+    "sha256": "496b1581895bd35021c1c79bbb2275b5ca403de27f865a6d01221e5723ffe261",
+    "role": "approved_vector"
+  },
+  "construction": {
+    "geometry": "one seven-vertex plane, reused twice with a 180-degree rotation",
+    "plane_path": "M24 54 L98 14 L98 46 L60 66 L60 86 L72 92 L24 118 Z",
+    "rotation_center": [
+      80,
+      80
+    ],
+    "view_box": [
+      0,
+      0,
+      160,
+      160
+    ],
+    "spec": "../../docs/specs/2026-10-21-open-passage-logo.md"
   },
   "appearance": {
     "fill": "#E5232E",
-    "fold_fill": "#A80F24",
-    "fold_face_count": 3,
     "background": "transparent",
-    "added_elements": [
-      "three clipped dark-red fold faces"
-    ],
+    "added_elements": [],
     "dark_mode_variant": {
       "same_as_default": true,
       "path": "spec-flow.svg"
     },
     "monochrome_variant": {
       "fill": "#FFFFFF",
-      "path": "spec-flow-white.svg",
-      "role": "retained alternative, not the dark-mode default"
+      "path": "spec-flow-white.svg"
     }
   },
-  "vectorization": {
-    "scope": "Original C silhouette; fold faces are from approved_vector.",
-    "engine": "VTracer 0.6.12",
-    "mode": "polygon",
-    "binarization_threshold": 128,
-    "simplification_tolerance_px": 0.75,
-    "svg_view_box": [
-      119,
-      400,
-      1016,
-      436
+  "lockup": {
+    "wordmark": "spec-flow",
+    "font": "Inter SemiBold (SIL OFL 1.1), outlined to paths",
+    "light": {
+      "path": "spec-flow-lockup.svg",
+      "wordmark_fill": "#1F2328"
+    },
+    "dark": {
+      "path": "spec-flow-lockup-dark.svg",
+      "wordmark_fill": "#FFFFFF"
+    },
+    "view_box": [
+      0,
+      0,
+      386.03,
+      160
     ],
-    "source_silhouette_overlap": 0.9924909416749945,
-    "maximum_source_edge_distance_px": 2.23606797749979
+    "wordmark_size": 40,
+    "wordmark_ascender": 30.469,
+    "gap": 49.296,
+    "gap_rule": "gap = wordmark_ascender * phi; mark_visible_height = wordmark_ascender * phi^3 (132 vs 129.1, ~2.3% over)"
   },
   "exports": {
     "svg": "spec-flow.svg",
     "svg_dark": "spec-flow.svg",
     "svg_monochrome": "spec-flow-white.svg",
+    "lockup_light": "spec-flow-lockup.svg",
+    "lockup_dark": "spec-flow-lockup-dark.svg",
     "png": {
       "path": "spec-flow.png",
-      "width": 2048,
-      "height": 879,
+      "width": 1024,
+      "height": 1024,
       "derived_from": "spec-flow.svg",
       "renderer": "CairoSVG 2.9.1"
     }
+  },
+  "history": [
+    {
+      "variant": "A-pure-red-fold",
+      "spec": "../../docs/specs/2026-10-21-red-fold-logo.md",
+      "note": "Replaced by open-passage on 2026-10-21; old source and vectorization details remain in git history and the old spec."
+    }
+  ],
+  "production_sha256": "496b1581895bd35021c1c79bbb2275b5ca403de27f865a6d01221e5723ffe261",
+  "lockup_sha256": {
+    "light": "7d57bbad82173461eb51a9cae962d1c1df1ad272fe4ef2a443871dfcb1a8206b",
+    "dark": "ba902c28f1f1da8bd26890dc0b52cc62afa5cd6e8bfc4eb3027d63a847ae51c3"
   }
 }
