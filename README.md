@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/spec-flow-white.svg">
-    <img alt="spec-flow" src="assets/logo/spec-flow.svg" width="480">
-  </picture>
+  <img alt="spec-flow" src="assets/logo/spec-flow.svg" width="480">
 </p>
 
 # spec-flow

@@ -1,24 +1,43 @@
 {
   "name": "spec-flow",
-  "selected_variant": "C",
+  "selected_variant": "A-pure-red-fold",
   "source": {
     "path": "source/c-original.png",
     "sha256": "a98678734589f1a9e82b52272cfeb641d375c5f442bdddbb5dd6bcc34d09093c",
     "width": 1254,
     "height": 1254,
     "generation_model": "gpt-image-2",
-    "generation_task_id": "14-c4026aec-401f-4d81-b235-aa71f3e7bdb9"
+    "generation_task_id": "14-c4026aec-401f-4d81-b235-aa71f3e7bdb9",
+    "role": "original_contour_reference"
+  },
+  "approved_vector": {
+    "path": "../../docs/specs/assets/2026-10-21-red-fold-logo.svg",
+    "sha256": "0570755a1fa99ec4edad7750ca876a3d4a980cf178bdf9cbf1e93f734ba8a237",
+    "spec": "../../docs/specs/2026-10-21-red-fold-logo.md",
+    "production_changes": [
+      "title and description only"
+    ]
   },
   "appearance": {
-    "fill": "#000000",
+    "fill": "#E5232E",
+    "fold_fill": "#A80F24",
+    "fold_face_count": 3,
     "background": "transparent",
-    "added_elements": [],
+    "added_elements": [
+      "three clipped dark-red fold faces"
+    ],
     "dark_mode_variant": {
+      "same_as_default": true,
+      "path": "spec-flow.svg"
+    },
+    "monochrome_variant": {
       "fill": "#FFFFFF",
-      "derived_from": "spec-flow.svg"
+      "path": "spec-flow-white.svg",
+      "role": "retained alternative, not the dark-mode default"
     }
   },
   "vectorization": {
+    "scope": "Original C silhouette; fold faces are from approved_vector.",
     "engine": "VTracer 0.6.12",
     "mode": "polygon",
     "binarization_threshold": 128,
@@ -34,11 +53,14 @@
   },
   "exports": {
     "svg": "spec-flow.svg",
-    "svg_dark": "spec-flow-white.svg",
+    "svg_dark": "spec-flow.svg",
+    "svg_monochrome": "spec-flow-white.svg",
     "png": {
       "path": "spec-flow.png",
       "width": 2048,
-      "height": 879
+      "height": 879,
+      "derived_from": "spec-flow.svg",
+      "renderer": "CairoSVG 2.9.1"
     }
   }
 }
