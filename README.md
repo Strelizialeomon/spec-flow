@@ -1,8 +1,9 @@
 <p align="center">
-  <img alt="spec-flow" src="assets/logo/spec-flow.svg" width="480">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/spec-flow-lockup-dark.svg">
+    <img alt="spec-flow" src="assets/logo/spec-flow-lockup.svg" width="480">
+  </picture>
 </p>
-
-# spec-flow
 
 **A set of process rules for AI coding agents.** You clone it into your agent's skills directory. From then on, when you ask for work worth designing, the agent agrees with you on what it is building *before* it writes code — and everything it produces has to pass a gate where **you** decide how much review it gets.
 
