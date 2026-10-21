@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1016" height="436" viewBox="119 400 1016 436" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">spec-flow red folded SF mark exploration</title>
+  <desc id="desc">Exploratory red folded treatment using the original spec-flow SF contour.</desc>
+  <defs>
+    <path id="s-shape" d="M0,0 L225,0 L219,7 L126,89 L-3,91 L-72,145 L-68,146 L97,147 L212,239 L213,243 L192,304 L183,311 L85,376 L-297,376 L-293,370 L-224,295 L58,293 L68,283 L105,239 L106,237 L-101,237 L-176,164 L-174,155 L-156,100 Z" transform="translate(440,428)"/>
+    <path id="f-shape" d="M0,0 L251,0 L415,2 L412,7 L328,91 L137,92 L126,93 L107,148 L308,148 L302,155 L221,231 L81,232 L78,233 L48,316 L44,321 L-58,387 L-154,388 L-154,386 L-52,318 L27,91 L-104,91 L-99,85 Z" transform="translate(696,424)"/>
+    <clipPath id="s-clip"><use href="#s-shape"/></clipPath>
+    <clipPath id="f-clip"><use href="#f-shape"/></clipPath>
+  </defs>
+
+  <!-- Base silhouette: the original SF paths remain the outer contour. -->
+  <g fill="#E5232E">
+    <use href="#s-shape"/>
+    <use href="#f-shape"/>
+  </g>
+
+  <!-- Three restrained underfold faces create depth without white material. -->
+  <g fill="#A80F24">
+    <path clip-path="url(#s-clip)" d="M284 528 L368 573 L264 592 Z"/>
+    <path clip-path="url(#s-clip)" d="M546 665 L652 667 L632 732 Z"/>
+    <path clip-path="url(#f-clip)" d="M696 424 L719 480 L833 516 L819 553 L740 497 Z"/>
+  </g>
+</svg>
